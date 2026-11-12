@@ -1,9 +1,10 @@
 import { useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { Clock, GraduationCap, TrendingUp } from 'lucide-react-native';
 import { View } from 'react-native';
 import { symboleDomaine } from '../../components/icones';
 import { BandeauHorsLigne, Carte, Ecran, ESPACE, Etat, Ligne, Pastille, Section, Texte, Vignette } from '../../components/ui';
-import { MetierDetail } from '../../lib/api';
+import { mesurer, MetierDetail } from '../../lib/api';
 import { LIBELLES_DEMANDE } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { useChargement } from '../../lib/useChargement';
@@ -12,6 +13,10 @@ export default function FicheMetier() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const { eleve } = useSession();
   const { donnees: m, chargement, erreur, horsLigne, recharger } = useChargement<MetierDetail>(`/metiers/${slug}`);
+
+  useEffect(() => {
+    if (slug) mesurer('metier_ouvert', { slug });
+  }, [slug]);
 
   if (!m) {
     return (

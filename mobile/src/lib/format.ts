@@ -47,3 +47,21 @@ export function niveauJeu(xp: number): { niveau: number; progression: number; re
   const PALIER = 200;
   return { niveau: Math.floor(xp / PALIER) + 1, progression: (xp % PALIER) / PALIER, restant: PALIER - (xp % PALIER) };
 }
+
+/** Convertit « JJ/MM/AAAA » en date ISO (AAAA-MM-JJ), ou null si la date est invalide. */
+export function analyserDate(texte: string): string | null {
+  const m = texte.trim().match(/^(\d{1,2})[/.\- ](\d{1,2})[/.\- ](\d{4})$/);
+  if (!m) return null;
+  const [jour, mois, annee] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const date = new Date(Date.UTC(annee, mois - 1, jour));
+  const valide = date.getUTCFullYear() === annee && date.getUTCMonth() === mois - 1 && date.getUTCDate() === jour;
+  return valide ? date.toISOString().slice(0, 10) : null;
+}
+
+/** Affiche une date ISO au format « JJ/MM/AAAA ». */
+export function dateCourte(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const deux = (n: number) => String(n).padStart(2, '0');
+  return `${deux(d.getUTCDate())}/${deux(d.getUTCMonth() + 1)}/${d.getUTCFullYear()}`;
+}

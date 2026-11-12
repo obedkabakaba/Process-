@@ -5,7 +5,7 @@
 
 *Nom de code du projet : **Process**. Nom commercial proposé : **Kesho** (voir §17 pour la vérification de marque).*
 
-> **État du projet (novembre 2026)** : la première version fonctionne. L'API (`Process-bakend`) et l'application mobile (`mobile/`) couvrent le profil, le test Mon ADN, l'explorateur, le Radar et Scout avec son bouclier anti-arnaque. Le détail de ce qui est fait et de ce qui reste est dans [docs/PLAN-ACTION.md](docs/PLAN-ACTION.md).
+> **État du projet (novembre 2026)** : le code du premier pilote est écrit. L'API (`Process-bakend`) et l'application (`mobile/`) couvrent la connexion par téléphone, l'accord parental, le test Mon ADN, l'explorateur, le Radar, Scout avec son bouclier anti-arnaque et un espace curateur avec analyse des annonces par IA. Ce qui reste avant d'ouvrir à de vrais élèves est listé dans [docs/PLAN-ACTION.md](docs/PLAN-ACTION.md).
 
 ---
 

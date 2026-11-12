@@ -1,10 +1,11 @@
 import * as Linking from 'expo-linking';
 import { useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
 import { Check, CircleHelp, ExternalLink, ShieldCheck, X } from 'lucide-react-native';
 import { View } from 'react-native';
 import { symboleType } from '../../components/icones';
 import { BandeauHorsLigne, Bouton, Carte, Ecran, ESPACE, Etat, Pastille, Section, Texte, Vignette } from '../../components/ui';
-import { Evaluation, Opportunite } from '../../lib/api';
+import { Evaluation, mesurer, Opportunite } from '../../lib/api';
 import { formaterDate, formaterDelai } from '../../lib/format';
 import { useSession } from '../../lib/session';
 import { useChargement } from '../../lib/useChargement';
@@ -15,6 +16,10 @@ export default function FicheOpportunite() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { eleve } = useSession();
   const { donnees, chargement, erreur, horsLigne, recharger } = useChargement<{ opportunite: Opportunite; evaluation: Evaluation | null }>(eleve ? `/scout/eleves/${eleve.id}/opportunites/${id}` : null);
+
+  useEffect(() => {
+    if (id) mesurer('opportunite_ouverte', { id });
+  }, [id]);
 
   if (!donnees) {
     return (
@@ -34,7 +39,7 @@ export default function FicheOpportunite() {
   const lien = o.urlOfficielle && !o.demo ? o.urlOfficielle : null;
 
   return (
-    <Ecran bords={['bottom']} pied={lien ? <Bouton titre="Ouvrir le site officiel" icone={ExternalLink} onPress={() => Linking.openURL(lien)} /> : undefined}>
+    <Ecran bords={['bottom']} pied={lien ? <Bouton titre="Ouvrir le site officiel" icone={ExternalLink} onPress={() => { mesurer('site_officiel_ouvert', { id }); Linking.openURL(lien); }} /> : undefined}>
       <BandeauHorsLigne visible={horsLigne} />
       <Vignette icone={type.icone} emoji={type.emoji} taille={56} />
       <Texte v="note" c="doux" style={{ marginTop: ESPACE.m }}>{type.nom} · {o.organisme}</Texte>

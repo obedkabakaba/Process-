@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
-import { CircleCheck, OctagonAlert, ShieldCheck, TriangleAlert } from 'lucide-react-native';
+import { CircleCheck, OctagonAlert, ShieldCheck, TriangleAlert, UsersRound } from 'lucide-react-native';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { CarteOpportunite } from '../../components/CarteOpportunite';
-import { BandeauHorsLigne, Bouton, Carte, Champ, Ecran, ESPACE, Etat, Segments, Texte } from '../../components/ui';
+import { Bandeau, BandeauHorsLigne, Bouton, Carte, Champ, Ecran, ESPACE, Etat, Segments, Texte } from '../../components/ui';
 import { envoyer, Fil, Verdict } from '../../lib/api';
 import { sansEmoji } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -70,7 +70,8 @@ function Verificateur() {
 export default function Scout() {
   const { eleve } = useSession();
   const [vue, setVue] = useState<Vue>('pour_toi');
-  const fil = useChargement<Fil>(eleve ? `/scout/eleves/${eleve.id}/fil` : null);
+  const enAttente = eleve?.consentement === 'en_attente';
+  const fil = useChargement<Fil>(eleve && !enAttente ? `/scout/eleves/${eleve.id}/fil` : null);
   const liste = vue === 'pour_toi' ? fil.donnees?.pourToi : fil.donnees?.presqueEligible;
 
   return (
@@ -91,6 +92,8 @@ export default function Scout() {
       <View style={{ marginTop: ESPACE.m }}>
         {vue === 'verifier' ? (
           <Verificateur />
+        ) : enAttente ? (
+          <Bandeau icone={UsersRound} titre="Il manque l'accord de ton parent" texte="Entre son code pour voir les opportunités auxquelles tu as droit." action="Entrer" onAction={() => router.push('/accord')} />
         ) : (
           <>
             <Etat

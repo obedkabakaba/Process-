@@ -1,11 +1,11 @@
 import { router, useFocusEffect } from 'expo-router';
-import { ArrowRight, Zap } from 'lucide-react-native';
+import { ArrowRight, UsersRound, Zap } from 'lucide-react-native';
 import { useCallback, useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { CarteOpportunite } from '../../components/CarteOpportunite';
 import { symboleType } from '../../components/icones';
 import { TuileMetier } from '../../components/TuileMetier';
-import { BandeauHorsLigne, Barre, Bouton, Ecran, ESPACE, Etat, Hero, Icone, Section, Texte } from '../../components/ui';
+import { Bandeau, BandeauHorsLigne, Barre, Bouton, Ecran, ESPACE, Etat, Hero, Icone, Section, Texte } from '../../components/ui';
 import { Evenement, Fil, Recommandations } from '../../lib/api';
 import { jourEtMois, niveauJeu } from '../../lib/format';
 import { useSession } from '../../lib/session';
@@ -16,7 +16,8 @@ export default function Accueil() {
   const t = useTheme();
   const { eleve, rafraichir } = useSession();
   const aPasseTest = !!eleve?.scoresRiasec;
-  const fil = useChargement<Fil>(eleve ? `/scout/eleves/${eleve.id}/fil` : null);
+  const enAttente = eleve?.consentement === 'en_attente';
+  const fil = useChargement<Fil>(eleve && !enAttente ? `/scout/eleves/${eleve.id}/fil` : null);
   const radar = useChargement<Evenement[]>(eleve ? `/radar?niveau=${eleve.niveau}&province=${encodeURIComponent(eleve.province)}` : null);
   const reco = useChargement<Recommandations>(eleve && aPasseTest ? `/eleves/${eleve.id}/recommandations` : null);
 
@@ -86,12 +87,18 @@ export default function Accueil() {
         <Texte v="note" c="faible">{jeu.restant} XP</Texte>
       </View>
 
-      <Section titre="Pour toi" action="Tout voir" onAction={() => router.push('/(tabs)/scout')}>
-        <Etat chargement={fil.chargement && !fil.donnees} erreur={fil.donnees ? null : fil.erreur} onReessayer={fil.recharger} vide={!!fil.donnees && opportunites.length === 0} messageVide="Kesho cherche des opportunités pour toi." />
-        {opportunites.map((e) => (
-          <CarteOpportunite key={e.opportuniteId} element={e} onPress={() => router.push(`/opportunite/${e.opportunite.id}`)} />
-        ))}
-      </Section>
+      {enAttente ? (
+        <View style={{ marginTop: ESPACE.l }}>
+          <Bandeau icone={UsersRound} titre="Il manque l'accord de ton parent" texte="Entre son code pour voir tes opportunités." action="Entrer" onAction={() => router.push('/accord')} />
+        </View>
+      ) : (
+        <Section titre="Pour toi" action="Tout voir" onAction={() => router.push('/(tabs)/scout')}>
+          <Etat chargement={fil.chargement && !fil.donnees} erreur={fil.donnees ? null : fil.erreur} onReessayer={fil.recharger} vide={!!fil.donnees && opportunites.length === 0} messageVide="Kesho cherche des opportunités pour toi." />
+          {opportunites.map((e) => (
+            <CarteOpportunite key={e.opportuniteId} element={e} onPress={() => router.push(`/opportunite/${e.opportunite.id}`)} />
+          ))}
+        </Section>
+      )}
 
       {reco.donnees && (
         <Section titre="Tes métiers" action="Mon ADN" onAction={() => router.push('/resultat')}>

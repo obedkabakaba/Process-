@@ -1,4 +1,4 @@
-import { ChevronRight, LucideIcon, WifiOff } from 'lucide-react-native';
+import { ArrowLeft, Check, ChevronRight, LucideIcon, WifiOff } from 'lucide-react-native';
 import { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleProp, Text, TextInput, TextInputProps, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -259,6 +259,64 @@ export function Barre({ valeur, couleur, fond, hauteur = 8 }: { valeur: number; 
     <View style={{ height: hauteur, borderRadius: 999, backgroundColor: fond ?? t.c.retrait, overflow: 'hidden' }} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(largeur) }}>
       <View style={{ height: '100%', width: `${largeur}%`, borderRadius: 999, backgroundColor: couleur ?? t.c.accent }} />
     </View>
+  );
+}
+
+/** Ligne de choix avec coche, pour les listes longues. */
+export function OptionListe({ libelle, detail, actif, onPress }: { libelle: string; detail?: string; actif: boolean; onPress: () => void }) {
+  const t = useTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityState={{ selected: actif }} onPress={onPress}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 56, paddingHorizontal: ESPACE.m, paddingVertical: 10, borderRadius: t.f.rayonM, borderWidth: Math.max(1.5, t.f.largeurBordure), borderColor: actif ? t.c.accent : t.c.bordure, backgroundColor: actif ? t.c.accentDoux : t.c.surface, marginBottom: ESPACE.s }}>
+      <View style={{ flex: 1 }}>
+        <Texte v="fort" c={actif ? 'accent' : 'texte'}>{libelle}</Texte>
+        {detail && <Texte v="petit" c="doux" numberOfLines={1}>{detail}</Texte>}
+      </View>
+      {actif && <Check size={18} color={t.c.surAccentDoux} strokeWidth={2.6} />}
+    </Pressable>
+  );
+}
+
+/** Libellé au-dessus d'un champ de formulaire. */
+export function Etiquette({ children }: { children: ReactNode }) {
+  return <Texte v="petit" c="doux" style={{ marginTop: ESPACE.l, marginBottom: ESPACE.s }}>{children}</Texte>;
+}
+
+/** En-tête d'un parcours en étapes : retour et barre de progression. */
+export function EnteteEtapes({ progression, onRetour }: { progression: number; onRetour: () => void }) {
+  const t = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: ESPACE.m, marginBottom: ESPACE.l }}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={onRetour} hitSlop={12}>
+        <ArrowLeft size={24} color={t.c.texte} />
+      </Pressable>
+      <View style={{ flex: 1 }}>
+        <Barre valeur={progression} />
+      </View>
+    </View>
+  );
+}
+
+/** Bandeau d'information ou d'alerte avec une action. */
+export function Bandeau({ icone: I, titre, texte, ton = 'accent', action, onAction }: { icone: LucideIcon; titre: string; texte?: string; ton?: Ton; action?: string; onAction?: () => void }) {
+  const t = useTheme();
+  const c = couleursTon(t, ton);
+  const contenu = (
+    <>
+      <I size={22} color={c.texte} strokeWidth={2.2} />
+      <View style={{ flex: 1 }}>
+        <Text style={[t.p.demi, { fontSize: 15, lineHeight: 20, color: c.texte }]}>{titre}</Text>
+        {texte && <Text style={[t.p.corps, { fontSize: 13, lineHeight: 18, color: c.texte, opacity: 0.9, marginTop: 2 }]}>{texte}</Text>}
+      </View>
+      {action && <Text style={[t.p.gras, { fontSize: 13, color: c.texte }]}>{action}</Text>}
+    </>
+  );
+  const style = { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 12, backgroundColor: c.fond, borderRadius: t.f.rayonM, padding: ESPACE.m };
+  if (!onAction) return <View style={style}>{contenu}</View>;
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${titre}. ${action ?? ''}`} onPress={onAction} style={({ pressed }) => [style, pressed && { opacity: 0.7 }]}>
+      {contenu}
+    </Pressable>
   );
 }
 

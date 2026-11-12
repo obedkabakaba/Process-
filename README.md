@@ -22,6 +22,10 @@ L'API est dans le dépôt `Process-bakend`.
 |---|---|---|---|
 | ![Accueil](docs/captures/accueil.png) | ![Test](docs/captures/test.png) | ![Scout](docs/captures/scout.png) | ![Accueil sombre](docs/captures/accueil-sombre.png) |
 
+| Connexion | Accord parental | Espace curateur | Fiche à valider |
+|---|---|---|---|
+| ![Connexion](docs/captures/connexion.png) | ![Accord parental](docs/captures/accord-parent.png) | ![Espace curateur](docs/captures/curateur.png) | ![Fiche](docs/captures/curateur-fiche.png) |
+
 Six apparences au choix, chacune en clair et en sombre :
 
 ![Apparences en clair](docs/captures/apparences-clair.png)

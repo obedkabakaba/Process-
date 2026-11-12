@@ -33,6 +33,13 @@ function Navigation() {
         }}
       >
         <Stack.Screen name="bienvenue" options={{ headerShown: false }} />
+        <Stack.Screen name="creation" options={{ headerShown: false }} />
+        <Stack.Screen name="accord" options={{ headerShown: false }} />
+        <Stack.Screen name="modifier" options={{ title: 'Mes informations' }} />
+        <Stack.Screen name="curation/index" options={{ title: 'Espace curateur' }} />
+        <Stack.Screen name="curation/fiche" options={{ title: 'Fiche' }} />
+        <Stack.Screen name="curation/radar" options={{ title: 'Radar' }} />
+        <Stack.Screen name="curation/sources" options={{ title: 'Sources' }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="test" options={{ headerShown: false }} />
         <Stack.Screen name="resultat" options={{ title: 'Mon ADN' }} />

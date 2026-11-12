@@ -4,76 +4,80 @@ Retour à la [vision](../VISION.md).
 
 Ce document dit **ce qui est construit**, **ce qui vient ensuite** et **ce que le fondateur doit décider ou faire lui-même**.
 
-## 1. Ce qui est construit (sprint 0, terminé)
+## 1. Ce qui est construit (sprints 0 et 1)
 
 ### API : dépôt `Process-bakend`
 
 | Brique | État |
 |---|---|
 | Catalogue : 45 métiers, 17 options des humanités, 28 établissements | ✅ Fait |
-| Test d'intérêts RIASEC (30 questions) et recommandations de métiers et d'options | ✅ Fait |
-| Profils élèves, XP, badge | ✅ Fait |
-| Scout : éligibilité critère par critère, « presque éligible », score de confiance, classement | ✅ Fait |
-| Bouclier anti-arnaque (vérification d'un message collé) | ✅ Fait |
-| Signalement d'une opportunité par la communauté (mise en revue, jamais publiée automatiquement) | ✅ Fait |
-| Radar : calendrier filtré par classe et province | ✅ Fait |
-| Tests : 28 tests unitaires et 8 tests de bout en bout | ✅ Passent |
-| Documentation interactive de l'API (`/api/docs`) | ✅ Fait |
+| Test d'intérêts RIASEC (30 questions) et recommandations | ✅ Fait |
+| **Connexion par numéro de téléphone** (code à 6 chiffres, session de 30 jours) | ✅ Fait |
+| **Chaque élève n'accède qu'à son profil** ; suppression du compte à la demande | ✅ Fait |
+| **Accord d'un parent** pour les moins de 18 ans | ✅ Fait |
+| Scout : éligibilité par critère, « presque éligible », score de confiance, classement | ✅ Fait |
+| Bouclier anti-arnaque, ouvert même sans compte | ✅ Fait |
+| **Espace curateur** : création, relecture, publication et rejet des fiches | ✅ Fait |
+| **Analyse d'une annonce par IA** (texte collé ou adresse web) vers un brouillon de fiche | ✅ Écrit, **pas encore essayé avec une vraie clé** |
+| **Sources surveillées** (flux RSS ou pages), collecte à la demande ou quotidienne | ✅ Écrit, dépend de l'IA ci-dessus |
+| **Gestion du Radar** par les curateurs | ✅ Fait |
+| **Rôles** (élève, curateur, administrateur) et gestion de l'équipe | ✅ Fait |
+| **Mesures d'usage** du pilote et statistiques | ✅ Fait |
+| Limites de débit, garde-fous de production, configuration Render, tests en CI | ✅ Fait |
+| Tests : 42 tests unitaires et 10 parcours de bout en bout | ✅ Passent |
 
 ### Application mobile : dossier `mobile/`
 
 | Écran | État |
 |---|---|
-| Création du profil, test Mon ADN, résultat | ✅ Fait |
-| Accueil, Explorer, Scout, Radar, Profil | ✅ Fait |
-| Fiches métier et opportunité | ✅ Fait |
+| Connexion par téléphone, création du profil en une question par écran | ✅ Fait |
+| Accord parental (code du parent), avec rappel sur l'accueil et dans Scout | ✅ Fait |
+| Test Mon ADN, résultat, accueil, Explorer, Scout, Radar, Profil | ✅ Fait |
+| Modifier ses informations, se déconnecter, supprimer son compte | ✅ Fait |
+| Espace curateur : tableau de bord, fiche, Radar, sources | ✅ Fait |
+| 6 apparences, chacune en clair et en sombre | ✅ Fait |
 | Lecture hors-ligne des dernières données chargées | ✅ Fait |
-| Design refait : icônes, polices, moins de texte | ✅ Fait |
-| 6 apparences au choix, chacune en clair et en sombre | ✅ Fait |
 
-Le parcours complet a été vérifié dans un navigateur (version web de l'application), sans erreur. **Il n'a pas encore été testé sur un téléphone Android réel.**
+Le parcours complet a été vérifié dans un navigateur (version web), sans erreur : connexion, profil d'une élève mineure, accord du parent, test, Scout, modification du profil, publication d'une fiche par un curateur, puis suppression du compte. **Il n'a pas encore été testé sur un téléphone Android réel.**
 
-Captures : [accueil](captures/accueil.png), [accueil sombre](captures/accueil-sombre.png), [test](captures/test.png), [résultat](captures/resultat.png), [Scout](captures/scout.png), [opportunité](captures/opportunite.png), [anti-arnaque](captures/arnaque.png), [explorateur](captures/explorer.png), [métier](captures/metier.png), [Radar](captures/radar.png), [profil](captures/profil.png), [choix d'apparence](captures/apparence.png).
+Captures : [bienvenue](captures/bienvenue.png), [connexion](captures/connexion.png), [accord parental](captures/accord-parent.png), [accueil](captures/accueil.png), [accueil sombre](captures/accueil-sombre.png), [test](captures/test.png), [résultat](captures/resultat.png), [Scout](captures/scout.png), [opportunité](captures/opportunite.png), [anti-arnaque](captures/arnaque.png), [explorateur](captures/explorer.png), [métier](captures/metier.png), [Radar](captures/radar.png), [profil](captures/profil.png), [apparences](captures/apparence.png), [espace curateur](captures/curateur.png), [fiche](captures/curateur-fiche.png), [sources](captures/curateur-sources.png).
 
 Les six apparences côte à côte : [en clair](captures/apparences-clair.png), [en sombre](captures/apparences-sombre.png).
 
-### Limites connues de cette version
+### Ce qui manque encore avant d'ouvrir à de vrais élèves
 
-| Limite | Conséquence | Quand la lever |
+| Point | Pourquoi c'est bloquant | Qui |
 |---|---|---|
-| **Pas de connexion sécurisée** : l'identifiant d'un élève suffit pour lire et modifier son profil | Ne pas ouvrir à de vrais élèves en l'état | Sprint 1 |
-| Pas de consentement parental | Idem | Sprint 1 |
-| Données de départ en partie estimées : tendances des métiers, nomenclature des options, dates du Radar | Affichées comme « estimées » ou « à confirmer » dans l'appli | Sprint 1 (collecte terrain) |
-| Salaires des métiers non renseignés | Champ vide, volontairement | Sprint 2 (enquête) |
-| Opportunités : 8 programmes réels sans date (critères indicatifs) et 9 exemples fictifs marqués « Exemple » | Scout démontre le moteur, pas encore un vrai flux | Sprint 2 |
-| Pas de collecte automatique, pas de notifications, pas de vidéos, pas de paiement | Fonctions absentes | Sprints 2 à 4 |
-| API non hébergée | Fonctionne en local seulement | Sprint 1 |
+| **Fournisseur SMS ou WhatsApp** | Sans lui, aucun code n'est envoyé. L'API est prête : elle transmet chaque message à une adresse à configurer (`MESSAGERIE_WEBHOOK_URL`) | Fondateur (choix et compte), puis branchement |
+| **Mise en ligne** de l'API et de la base | L'appli ne fonctionne qu'en local. `render.yaml` est prêt | Fondateur (compte et coût) |
+| **Version Android** et test sur de vrais téléphones | Jamais testée hors navigateur. `eas.json` est prêt | Fondateur (comptes Expo et Google Play) |
+| **Premier essai de l'IA** avec une clé | Le code n'a jamais appelé l'IA pour de vrai | Fondateur (clé d'API), puis réglages |
+| **Avis d'un juriste** sur les données et l'accord parental | L'accord par code est un mécanisme simple ; sa validité légale en RDC n'est pas vérifiée | Fondateur |
+| **Données réelles** : opportunités vérifiées, options officielles, calendrier | Les données de départ sont en partie estimées ou fictives | Curateur |
+
+### Limites connues
+
+- L'accord parental repose sur un code envoyé au numéro que l'élève indique : un élève peut donner un autre numéro que celui de son parent.
+- Les règles anti-arnaque reconnaissent les arnaques classiques, pas toutes.
+- Salaires des métiers non renseignés ; tendances des métiers estimées.
+- Pas encore de notifications, de vidéos, de jeux ni de paiement.
 
 ## 2. Les prochains sprints
 
 Un sprint dure deux semaines.
 
-### Sprint 1 : prêt pour un vrai pilote
+### Sprint 1 : prêt pour un vrai pilote (code terminé)
 
-| Tâche | Détail |
-|---|---|
-| Connexion par numéro de téléphone | Code reçu par SMS ou WhatsApp, jeton de session, chaque élève n'accède qu'à son profil |
-| Consentement parental | Numéro du parent, message de validation, mention claire des données collectées |
-| Hébergement | API et base de données en ligne, sauvegardes, surveillance des erreurs |
-| Version Android installable | Construction avec EAS, test sur 3 téléphones d'entrée de gamme |
-| Interface des curateurs | Ajouter, corriger et publier les opportunités et les dates du Radar sans toucher au code |
-| Données réelles | Remplacer les exemples par 30 opportunités vérifiées ; confirmer les options et le calendrier |
-| Modifier son profil dans l'appli | Compléter moyenne, date de naissance, langues |
-| Mesure | Compter les inscriptions, tests terminés, opportunités ouvertes |
+Le code du sprint 1 est fait. Il reste les actions du tableau « Ce qui manque encore », qui dépendent de comptes et de décisions.
 
-**Objectif de fin de sprint :** 3 écoles pilotes, 100 élèves qui utilisent l'appli.
+**Objectif :** 3 écoles pilotes, 100 élèves qui utilisent l'appli.
 
 ### Sprint 2 : Scout devient vivant
 
 | Tâche | Détail |
 |---|---|
-| Collecte automatique | 20 sources officielles surveillées chaque jour |
-| Extraction par IA | Chaque annonce devient une fiche avec ses critères, relue par un curateur |
+| Régler l'analyse par IA | Essais sur 50 annonces réelles, mesure des erreurs, ajustement de la consigne |
+| 20 sources officielles | Ajoutées et suivies dans l'espace curateur |
 | Notifications | Push et WhatsApp : nouvelle opportunité, rappels à J-7 et J-2 |
 | Suivi des candidatures | « Je postule », liste des documents, résultat |
 | Opportunités futures | « Dans 2 ans tu pourras viser X » transformé en objectifs |
@@ -112,9 +116,10 @@ Ces points ne peuvent pas être faits par le code.
 | 1 | **Valider le nom** et vérifier la marque (une ONG « Kesho Congo » existe à Bukavu) | Avant toute communication publique | Cette semaine |
 | 2 | Choisir **3 écoles pilotes** parmi les clientes d'Ardoise | Sans élèves réels, on ne sait pas ce qui marche | Cette semaine |
 | 3 | Confirmer la **liste officielle des options** des humanités et le **calendrier 2026-2027** | Les données de départ sont à valider | Sprint 1 |
-| 4 | Choisir l'**hébergement** (par exemple Render pour l'API et Supabase pour la base de données) et valider le coût mensuel | Mise en ligne de l'API | Sprint 1 |
-| 5 | Créer les comptes **Expo** et **Google Play** (25 $ une fois) | Distribuer l'appli Android | Sprint 1 |
-| 6 | Choisir un **fournisseur de SMS ou WhatsApp** pour les codes de connexion | Connexion par téléphone | Sprint 1 |
+| 4 | Créer le compte d'**hébergement** (Render par exemple) et valider le coût mensuel | Mise en ligne de l'API avec `render.yaml` | Cette semaine |
+| 5 | Créer les comptes **Expo** et **Google Play** (25 $ une fois) | Construire et distribuer l'appli Android | Cette semaine |
+| 6 | Choisir un **fournisseur de SMS ou WhatsApp** | Envoi des codes de connexion et d'accord parental | Cette semaine |
+| 6 bis | Créer une **clé d'API Claude** | Analyse des annonces dans l'espace curateur | Sprint 2 |
 | 7 | Recruter **1 curateur** (étudiant à temps partiel) | Vérifier les opportunités chaque jour | Sprint 2 |
 | 8 | Recruter **10 ambassadeurs vidéastes** | Contenu du fil vidéo | Sprint 2 |
 | 9 | Lancer les rendez-vous du **top 20 partenaires** ([PARTENAIRES.md](PARTENAIRES.md)) | Financement et distribution | En continu |
@@ -128,7 +133,7 @@ cd Process-bakend
 npm install
 cp .env.example .env
 npm run db:deploy && npm run db:seed
-npm run dev                      # http://localhost:3000/api/docs
+ADMIN_TELEPHONES=+243812345678 npm run dev   # ton numéro devient administrateur ; http://localhost:3000/api/docs
 
 # 2. Application
 cd Process-/mobile

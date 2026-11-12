@@ -3,21 +3,25 @@
 Application Android et iOS de Kesho, construite avec **Expo (SDK 58)** et **Expo Router**.
 Elle a besoin de l'API du dépôt `Process-bakend`.
 
-## Ce que fait cette première version
+## Écrans
 
 | Écran | Rôle |
 |---|---|
-| Bienvenue | Création du profil en 3 étapes : prénom, classe et province, informations pour les opportunités |
-| Test Mon ADN | 30 cartes d'activités, 3 réponses possibles (test d'intérêts RIASEC) |
-| Mon ADN | Profil dominant, trois forces, métiers et options recommandés |
-| Accueil | XP et niveau, prochaine échéance, opportunité du moment, métiers pour toi |
+| Bienvenue | Présentation, puis connexion par numéro de téléphone et code à 6 chiffres |
+| Création du profil | Une question par écran : prénom, classe, option, province, date de naissance, informations facultatives |
+| Accord parental | Pour les moins de 18 ans : saisie du code reçu par le parent. Possible plus tard |
+| Test Mon ADN | 30 cartes d'activités, 3 réponses possibles |
+| Mon ADN | Profil dominant, forces, métiers et options recommandés |
+| Accueil | Prochaine échéance, opportunités, métiers, XP |
 | Explorer | Métiers et écoles, avec recherche et filtres |
 | Scout | Opportunités « Pour toi », « Presque » et vérificateur d'arnaque |
 | Radar | Dates des examens et des inscriptions pour la classe de l'élève |
-| Profil | Informations, badges, changement de profil |
-| Apparence | Choix parmi 6 apparences, en clair, sombre ou automatique |
+| Profil | Informations, modification, apparence, déconnexion, suppression du compte |
+| Espace curateur | Réservé aux curateurs : tableau de bord, fiche avec analyse par IA, Radar, sources |
 
-Le profil est gardé sur le téléphone. Les dernières données chargées restent visibles sans connexion (un bandeau « Hors-ligne » l'indique).
+Le jeton de session est gardé dans le coffre chiffré du téléphone. Les dernières données chargées restent visibles sans connexion (un bandeau « Hors-ligne » l'indique).
+
+En développement, l'API ne peut pas envoyer de message : le code de connexion s'affiche sous le champ (« Mode démonstration »).
 
 ## Apparences et mode sombre
 
@@ -55,6 +59,14 @@ Sur un téléphone réel, `EXPO_PUBLIC_API_URL` doit pointer vers l'adresse IP d
 ```bash
 npm run typecheck       # types TypeScript
 npm run export:web      # construit la version navigateur dans dist/
+```
+
+## Construire la version Android
+
+`eas.json` prépare un fichier APK de test (`preview`). Il faut un compte Expo ; cette étape n'a pas encore été exécutée.
+
+```bash
+npx eas-cli@latest build --profile preview --platform android
 ```
 
 ## Organisation du code

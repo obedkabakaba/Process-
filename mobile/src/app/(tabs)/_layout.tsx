@@ -4,7 +4,7 @@ import { CalendarDays, Compass, House, LucideIcon, Target, UserRound } from 'luc
 import { ActivityIndicator, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Logo } from '../../components/Logo';
-import { useSession } from '../../lib/session';
+import { estCurateur, useSession } from '../../lib/session';
 import { useTheme } from '../../theme/ThemeProvider';
 
 const icone = (I: LucideIcon) =>
@@ -14,7 +14,7 @@ const icone = (I: LucideIcon) =>
   };
 
 export default function Onglets() {
-  const { pret, eleve } = useSession();
+  const { pret, compte, eleve } = useSession();
   const t = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -26,7 +26,9 @@ export default function Onglets() {
       </View>
     );
   }
-  if (!eleve) return <Redirect href="/bienvenue" />;
+  if (!compte) return <Redirect href="/bienvenue" />;
+  // Un curateur sans profil d'élève va directement à son espace.
+  if (!eleve) return <Redirect href={estCurateur(compte) ? '/curation' : '/creation'} />;
 
   return (
     <Tabs

@@ -163,14 +163,16 @@ Bourse Excellence Sciences 2027 — Fondation X
 
 | Étape | État dans `Process-bakend` |
 |---|---|
-| 1. Collecte | ⏳ À faire. Seuls les signalements de la communauté existent (`POST /api/scout/signalements`), mis en revue sans publication automatique |
-| 2. Extraction par IA | ⏳ À faire |
-| 3. Vérification | ✅ Score de confiance et règles anti-arnaque (`src/scout/confiance.ts`). En dessous de 70, rien n'est montré aux élèves |
-| 4. Matching | ✅ Éligibilité par critère, « presque éligible », pertinence, urgence, diversité (`src/scout/eligibilite.ts`, `src/scout/matching.ts`) |
-| 5. Notification | ⏳ À faire. Le fil est visible dans l'appli (`GET /api/scout/eleves/:id/fil`) |
+| 1. Collecte | ✅ Sources (flux RSS ou pages) gérées par les curateurs, collecte à la demande ou quotidienne, 10 annonces au plus par source et par passage. Signalements de la communauté. Pas encore de recherche web automatique |
+| 2. Extraction par IA | ✅ Écrite (`src/curation/extracteur.ts`) : fiche structurée, citation exigée pour chaque critère, points incertains signalés. **Pas encore essayée avec une vraie clé d'API** |
+| 3. Vérification | ✅ Score de confiance et règles anti-arnaque. Rien n'est visible des élèves sans publication par un curateur ; un signal d'arnaque critique bloque la publication |
+| 4. Matching | ✅ Éligibilité par critère, « presque éligible », pertinence, urgence, diversité |
+| 5. Notification | ⏳ À faire. Le fil est visible dans l'appli |
 | 6. Accompagnement | ⏳ À faire. La fiche affiche déjà les documents à préparer |
-| Vérificateur d'arnaque | ✅ `POST /api/scout/verifier-message`, disponible dans l'onglet Scout de l'appli |
+| Vérificateur d'arnaque | ✅ Dans l'onglet Scout, utilisable sans compte |
+
+Le parcours d'une annonce aujourd'hui : source ou texte collé → brouillon rempli par l'IA → relecture par un curateur dans l'appli → publication → visible des élèves éligibles.
 
 Les règles anti-arnaque sont des règles de mots et de motifs : elles attrapent les arnaques classiques, pas toutes. Une annonce sans alerte n'est pas une annonce garantie, et l'appli le dit.
 
-Prochaine brique : la collecte et l'extraction (sprint 2 du [plan d'action](PLAN-ACTION.md)).
+Prochaines briques : régler l'IA sur de vraies annonces, puis les notifications (sprint 2 du [plan d'action](PLAN-ACTION.md)).
