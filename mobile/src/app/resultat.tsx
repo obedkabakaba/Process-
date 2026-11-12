@@ -1,12 +1,16 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { Barre, Bouton, Carte, Ecran, Etat, Puce, Section, SousTitre, Titre } from '../components/ui';
+import { Sparkles } from 'lucide-react-native';
+import { ScrollView, View } from 'react-native';
+import { symboleProfil } from '../components/icones';
+import { TuileMetier } from '../components/TuileMetier';
+import { Barre, Bouton, Carte, Ecran, ESPACE, Etat, Hero, Icone, Ligne, Pastille, Section, Texte } from '../components/ui';
 import { Recommandations } from '../lib/api';
 import { useSession } from '../lib/session';
-import { couleurs, espace, rayon } from '../lib/theme';
 import { useChargement } from '../lib/useChargement';
+import { useTheme } from '../theme/ThemeProvider';
 
 export default function Resultat() {
+  const t = useTheme();
   const { eleve } = useSession();
   const { xp } = useLocalSearchParams<{ xp?: string }>();
   const { donnees, chargement, erreur, recharger } = useChargement<Recommandations>(eleve?.scoresRiasec ? `/eleves/${eleve.id}/recommandations` : null);
@@ -14,93 +18,66 @@ export default function Resultat() {
 
   if (!eleve?.scoresRiasec) {
     return (
-      <Ecran>
-        <Titre>Découvre ton ADN</Titre>
-        <SousTitre>Réponds à 30 questions rapides pour connaître ton profil et les métiers qui te correspondent.</SousTitre>
-        <Bouton titre="Passer le test" onPress={() => router.replace('/test')} />
+      <Ecran bords={['bottom']} pied={<Bouton titre="Passer le test" onPress={() => router.replace('/test')} />}>
+        <Texte v="titre">Découvre ton ADN</Texte>
+        <Texte c="doux" style={{ marginTop: ESPACE.s }}>30 questions, 3 minutes.</Texte>
       </Ecran>
     );
   }
   if (!donnees) {
     return (
-      <Ecran>
+      <Ecran bords={['bottom']}>
         <Etat chargement={chargement} erreur={erreur} onReessayer={recharger} />
       </Ecran>
     );
   }
 
   const [dominant] = donnees.profil;
-  const enFinDeBase = eleve.niveau === 'EB7' || eleve.niveau === 'EB8';
+  const symbole = symboleProfil(dominant.type);
 
   return (
-    <Ecran bords={['bottom']}>
-      {xpGagne > 0 && (
-        <View style={styles.xp}>
-          <Text style={styles.texteXp}>🎉 +{xpGagne} XP · Badge « Explorateur » débloqué</Text>
+    <Ecran bords={['bottom']} pied={<Bouton titre="Voir mes opportunités" onPress={() => router.replace('/(tabs)/scout')} />}>
+      <Hero>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Icone icone={symbole.icone} emoji={dominant.emoji} taille={40} couleur={t.c.heroAccent} />
+          {xpGagne > 0 && <Pastille icone={Sparkles} ton="accent" texte={`+${xpGagne} XP`} />}
         </View>
-      )}
-      <View style={styles.hero}>
-        <Text style={styles.emojiHero}>{dominant.emoji}</Text>
-        <Text style={styles.surtitre}>{eleve.prenom}, tu es surtout</Text>
-        <Text style={styles.nomProfil}>{dominant.nom}</Text>
-        <Text style={styles.resume}>{dominant.resume}</Text>
-      </View>
+        <Texte v="petit" c="heroDoux" style={{ marginTop: ESPACE.l }}>{eleve.prenom}, ton profil</Texte>
+        <Texte v="geant" c="surHero">{dominant.nom}</Texte>
+        <Texte c="heroDoux" style={{ marginTop: ESPACE.s }}>{dominant.resume}</Texte>
+      </Hero>
 
-      <Section titre="Tes trois forces">
-        {donnees.profil.map((p) => (
-          <Carte key={p.type}>
-            <View style={styles.ligneForce}>
-              <Text style={styles.nomForce}>{p.emoji} {p.nom}</Text>
-              <Text style={styles.scoreForce}>{p.score} %</Text>
+      <Section titre="Tes forces">
+        <Carte>
+          {donnees.profil.map((p, i) => (
+            <View key={p.type} style={{ marginTop: i === 0 ? 0 : ESPACE.m }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                <Texte v="fort">{p.nom}</Texte>
+                <Texte v="fort" c="doux">{p.score} %</Texte>
+              </View>
+              <Barre valeur={p.score / 100} />
             </View>
-            <Barre valeur={p.score / 100} />
-          </Carte>
-        ))}
+          ))}
+        </Carte>
       </Section>
 
-      <Section titre="Métiers faits pour toi">
-        {donnees.metiers.slice(0, 6).map((m) => (
-          <Carte key={m.slug} onPress={() => router.push(`/metier/${m.slug}`)} etiquette={m.nom}>
-            <View style={styles.ligneForce}>
-              <Text style={styles.nomMetier}>{m.emoji} {m.nom}</Text>
-              <Puce texte={`${m.compatibilite} %`} ton="primaire" />
-            </View>
-            <Text style={styles.domaine}>{m.domaine}</Text>
-          </Carte>
-        ))}
+      <Section titre="Métiers pour toi">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -ESPACE.m }} contentContainerStyle={{ paddingHorizontal: ESPACE.m, gap: 10 }}>
+          {donnees.metiers.slice(0, 8).map((m) => (
+            <TuileMetier key={m.slug} metier={m} largeur={156} onPress={() => router.push(`/metier/${m.slug}`)} />
+          ))}
+        </ScrollView>
       </Section>
 
-      <Section titre={enFinDeBase ? 'Options à envisager après la 8e' : 'Options des humanités qui te ressemblent'}>
-        {donnees.options.slice(0, 3).map((o) => (
-          <Carte key={o.slug}>
-            <View style={styles.ligneForce}>
-              <Text style={styles.nomMetier}>{o.nom}</Text>
-              <Puce texte={`${o.compatibilite} %`} ton="soleil" />
-            </View>
-            <Text style={styles.domaine}>{o.description}</Text>
-          </Carte>
-        ))}
+      <Section titre="Options des humanités">
+        <Carte plat>
+          {donnees.options.slice(0, 3).map((o, i, liste) => (
+            <Ligne key={o.slug} titre={o.nom} sousTitre={o.matieresCles.join(' · ')} dernier={i === liste.length - 1} droite={<Texte v="fort" c="accent">{o.compatibilite} %</Texte>} />
+          ))}
+        </Carte>
       </Section>
 
-      <Text style={styles.note}>Ce test est un point de départ, pas un verdict. Parles-en avec tes parents et tes enseignants.</Text>
-      <Bouton titre="Voir mes opportunités" onPress={() => router.replace('/(tabs)/scout')} />
-      <Bouton titre="Aller à l'accueil" variante="secondaire" onPress={() => router.replace('/(tabs)')} />
+      <Texte v="note" c="faible" centre style={{ marginTop: ESPACE.l }}>Un point de départ, pas un verdict. Parles-en avec tes parents.</Texte>
     </Ecran>
   );
 }
-
-const styles = StyleSheet.create({
-  xp: { backgroundColor: couleurs.soleilClair, borderRadius: rayon.moyen, padding: espace.m, marginBottom: espace.m },
-  texteXp: { color: '#7A5600', fontWeight: '700', fontSize: 15, textAlign: 'center' },
-  hero: { backgroundColor: couleurs.primaire, borderRadius: rayon.grand, padding: espace.l, alignItems: 'center' },
-  emojiHero: { fontSize: 64 },
-  surtitre: { color: couleurs.soleil, fontWeight: '700', fontSize: 14, marginTop: espace.s },
-  nomProfil: { color: couleurs.blanc, fontWeight: '900', fontSize: 34, letterSpacing: -1 },
-  resume: { color: couleurs.blanc, fontSize: 15, textAlign: 'center', marginTop: espace.s, lineHeight: 21, opacity: 0.95 },
-  ligneForce: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  nomForce: { fontSize: 16, fontWeight: '700', color: couleurs.texte },
-  scoreForce: { fontSize: 15, fontWeight: '700', color: couleurs.primaire },
-  nomMetier: { fontSize: 16, fontWeight: '700', color: couleurs.texte, flex: 1, marginRight: espace.s },
-  domaine: { fontSize: 13, color: couleurs.texteDoux, lineHeight: 18 },
-  note: { fontSize: 13, color: couleurs.texteDoux, textAlign: 'center', marginTop: espace.l, lineHeight: 19 },
-});

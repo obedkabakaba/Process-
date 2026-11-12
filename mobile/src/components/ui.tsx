@@ -1,182 +1,320 @@
+import { ChevronRight, LucideIcon, WifiOff } from 'lucide-react-native';
 import { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleProp, Text, TextInput, TextInputProps, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { couleurs, espace, rayon } from '../lib/theme';
+import { Theme } from '../theme/apparences';
+import { useStyles, useTheme } from '../theme/ThemeProvider';
 
-export function Ecran({ children, defilant = true, bords = ['top'] }: { children: ReactNode; defilant?: boolean; bords?: ('top' | 'bottom')[] }) {
+export const ESPACE = { xs: 4, s: 8, m: 16, l: 24, xl: 32 };
+
+// ----- Texte -----
+
+type Variante = 'geant' | 'titre' | 'sousTitre' | 'section' | 'fort' | 'corps' | 'petit' | 'note';
+type Couleur = 'texte' | 'doux' | 'faible' | 'accent' | 'surAccent' | 'succes' | 'alerte' | 'danger' | 'surHero' | 'heroDoux' | 'heroAccent';
+
+function couleurTexte(t: Theme, c: Couleur): string {
+  const table: Record<Couleur, string> = {
+    texte: t.c.texte, doux: t.c.texteDoux, faible: t.c.texteFaible, accent: t.c.surAccentDoux, surAccent: t.c.surAccent,
+    succes: t.c.succes, alerte: t.c.alerte, danger: t.c.danger, surHero: t.c.surHero, heroDoux: t.c.heroDoux, heroAccent: t.c.heroAccent,
+  };
+  return table[c];
+}
+
+function styleTexte(t: Theme, v: Variante): TextStyle {
+  switch (v) {
+    case 'geant': return { ...t.p.titre, fontSize: 34, lineHeight: 40, letterSpacing: t.p.espacementTitre };
+    case 'titre': return { ...t.p.titre, fontSize: 26, lineHeight: 32, letterSpacing: t.p.espacementTitre };
+    case 'sousTitre': return { ...t.p.titre, fontSize: 20, lineHeight: 26, letterSpacing: t.p.espacementTitre / 2 };
+    case 'section': return { ...t.p.demi, fontSize: 17, lineHeight: 22 };
+    case 'fort': return { ...t.p.demi, fontSize: 15, lineHeight: 20 };
+    case 'corps': return { ...t.p.corps, fontSize: 15, lineHeight: 22 };
+    case 'petit': return { ...t.p.moyen, fontSize: 13, lineHeight: 18 };
+    case 'note': return { ...t.p.moyen, fontSize: 12, lineHeight: 16 };
+  }
+}
+
+export function Texte({ v = 'corps', c = 'texte', centre, style, ...props }: TextProps & { v?: Variante; c?: Couleur; centre?: boolean }) {
+  const t = useTheme();
+  return <Text {...props} style={[styleTexte(t, v), { color: couleurTexte(t, c) }, centre && { textAlign: 'center' }, style]} />;
+}
+
+// ----- Icône -----
+
+/** Affiche une icône, ou son emoji dans les apparences qui les préfèrent. */
+export function Icone({ icone: I, emoji, taille = 20, couleur }: { icone: LucideIcon; emoji?: string; taille?: number; couleur?: string }) {
+  const t = useTheme();
+  if (t.f.emojis && emoji) return <Text style={{ fontSize: taille * 0.95, lineHeight: taille * 1.2 }}>{emoji}</Text>;
+  return <I size={taille} color={couleur ?? t.c.texte} strokeWidth={2} />;
+}
+
+type Ton = 'accent' | 'neutre' | 'succes' | 'alerte' | 'danger';
+
+function couleursTon(t: Theme, ton: Ton): { fond: string; texte: string } {
+  switch (ton) {
+    case 'accent': return { fond: t.c.accentDoux, texte: t.c.surAccentDoux };
+    case 'succes': return { fond: t.c.succesDoux, texte: t.c.succes };
+    case 'alerte': return { fond: t.c.alerteDoux, texte: t.c.alerte };
+    case 'danger': return { fond: t.c.dangerDoux, texte: t.c.danger };
+    case 'neutre': return { fond: t.c.retrait, texte: t.c.texteDoux };
+  }
+}
+
+/** Icône dans un carré arrondi teinté. */
+export function Vignette({ icone, emoji, ton = 'accent', taille = 44 }: { icone: LucideIcon; emoji?: string; ton?: Ton; taille?: number }) {
+  const t = useTheme();
+  const c = couleursTon(t, ton);
   return (
-    <SafeAreaView style={styles.ecran} edges={bords}>
+    <View style={{ width: taille, height: taille, borderRadius: Math.min(t.f.rayonM, taille / 3), backgroundColor: c.fond, alignItems: 'center', justifyContent: 'center' }}>
+      <Icone icone={icone} emoji={emoji} taille={taille * 0.48} couleur={c.texte} />
+    </View>
+  );
+}
+
+// ----- Structure -----
+
+export function Ecran({ children, defilant = true, bords = ['top'], pied }: { children: ReactNode; defilant?: boolean; bords?: ('top' | 'bottom')[]; pied?: ReactNode }) {
+  const s = useStyles(styles);
+  return (
+    <SafeAreaView style={s.ecran} edges={bords}>
       {defilant ? (
-        <ScrollView contentContainerStyle={styles.contenu} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={s.contenu} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {children}
         </ScrollView>
       ) : (
-        <View style={[styles.contenu, { flex: 1 }]}>{children}</View>
+        <View style={[s.contenu, { flex: 1 }]}>{children}</View>
       )}
+      {pied && <View style={s.pied}>{pied}</View>}
     </SafeAreaView>
   );
 }
 
-export function Titre({ children, style }: { children: ReactNode; style?: StyleProp<TextStyle> }) {
-  return <Text accessibilityRole="header" style={[styles.titre, style]}>{children}</Text>;
-}
-
-export function SousTitre({ children }: { children: ReactNode }) {
-  return <Text style={styles.sousTitre}>{children}</Text>;
-}
-
-export function Section({ titre, children, action }: { titre: string; children: ReactNode; action?: ReactNode }) {
+export function Section({ titre, children, action, onAction }: { titre: string; children: ReactNode; action?: string; onAction?: () => void }) {
+  const s = useStyles(styles);
   return (
-    <View style={styles.section}>
-      <View style={styles.enteteSection}>
-        <Text accessibilityRole="header" style={styles.titreSection}>{titre}</Text>
-        {action}
+    <View style={s.section}>
+      <View style={s.enteteSection}>
+        <Texte v="section" accessibilityRole="header">{titre}</Texte>
+        {action && onAction && (
+          <Pressable accessibilityRole="button" onPress={onAction} hitSlop={12}>
+            <Texte v="petit" c="accent">{action}</Texte>
+          </Pressable>
+        )}
       </View>
       {children}
     </View>
   );
 }
 
-export function Carte({ children, onPress, style, etiquette }: { children: ReactNode; onPress?: () => void; style?: StyleProp<ViewStyle>; etiquette?: string }) {
-  if (!onPress) return <View style={[styles.carte, style]}>{children}</View>;
+export function Carte({ children, onPress, style, etiquette, plat }: { children: ReactNode; onPress?: () => void; style?: StyleProp<ViewStyle>; etiquette?: string; plat?: boolean }) {
+  const s = useStyles(styles);
+  const base = [s.carte, plat && s.cartePlate, style];
+  if (!onPress) return <View style={base}>{children}</View>;
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={etiquette} onPress={onPress} style={({ pressed }) => [styles.carte, pressed && styles.presse, style]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={etiquette} onPress={onPress} style={({ pressed }) => [...base, pressed && s.presse]}>
       {children}
     </Pressable>
   );
 }
 
-type Variante = 'primaire' | 'secondaire' | 'discret';
+/** Grande carte mise en avant, dans la couleur forte de l'apparence. */
+export function Hero({ children, onPress, etiquette, style }: { children: ReactNode; onPress?: () => void; etiquette?: string; style?: StyleProp<ViewStyle> }) {
+  const s = useStyles(styles);
+  if (!onPress) return <View style={[s.hero, style]}>{children}</View>;
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={etiquette} onPress={onPress} style={({ pressed }) => [s.hero, style, pressed && s.presse]}>
+      {children}
+    </Pressable>
+  );
+}
 
-export function Bouton({ titre, onPress, variante = 'primaire', desactive, chargement }: { titre: string; onPress: () => void; variante?: Variante; desactive?: boolean; chargement?: boolean }) {
+/** Ligne de liste : vignette, titre, sous-titre, élément à droite. */
+export function Ligne({ titre, sousTitre, gauche, droite, onPress, dernier }: { titre: string; sousTitre?: string; gauche?: ReactNode; droite?: ReactNode; onPress?: () => void; dernier?: boolean }) {
+  const s = useStyles(styles);
+  const t = useTheme();
+  const contenu = (
+    <>
+      {gauche}
+      <View style={{ flex: 1 }}>
+        <Texte v="fort" numberOfLines={2}>{titre}</Texte>
+        {sousTitre && <Texte v="petit" c="doux" numberOfLines={1} style={{ marginTop: 2 }}>{sousTitre}</Texte>}
+      </View>
+      {droite ?? (onPress ? <ChevronRight size={18} color={t.c.texteFaible} /> : null)}
+    </>
+  );
+  const style = [s.ligne, !dernier && s.ligneSeparee];
+  if (!onPress) return <View style={style}>{contenu}</View>;
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={titre} onPress={onPress} style={({ pressed }) => [...style, pressed && s.presse]}>
+      {contenu}
+    </Pressable>
+  );
+}
+
+// ----- Actions -----
+
+type VarianteBouton = 'primaire' | 'secondaire' | 'discret' | 'surHero';
+
+export function Bouton({ titre, onPress, variante = 'primaire', desactive, chargement, icone: I, compact }: { titre: string; onPress: () => void; variante?: VarianteBouton; desactive?: boolean; chargement?: boolean; icone?: LucideIcon; compact?: boolean }) {
+  const t = useTheme();
+  const s = useStyles(styles);
   const inactif = desactive || chargement;
+  const couleurs = {
+    primaire: { fond: t.c.accent, texte: t.c.surAccent, relief: t.c.accentRelief },
+    secondaire: { fond: t.c.retrait, texte: t.c.texte, relief: t.c.bordure },
+    discret: { fond: 'transparent', texte: t.c.texteDoux, relief: 'transparent' },
+    surHero: { fond: t.c.surHero, texte: t.c.hero, relief: t.c.heroDoux },
+  }[variante];
+  const enRelief = t.f.relief && variante !== 'discret';
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ disabled: !!inactif }}
       disabled={inactif}
       onPress={onPress}
-      style={({ pressed }) => [styles.bouton, styles[`bouton_${variante}`], inactif && styles.boutonInactif, pressed && styles.presse]}
+      style={({ pressed }) => [
+        s.bouton,
+        compact && s.boutonCompact,
+        { backgroundColor: couleurs.fond },
+        enRelief && { borderBottomWidth: pressed ? 0 : 4, borderBottomColor: couleurs.relief, marginTop: pressed ? 4 : 0 },
+        inactif && { opacity: 0.4 },
+        pressed && !enRelief && s.presse,
+      ]}
     >
-      {chargement ? <ActivityIndicator color={variante === 'primaire' ? couleurs.blanc : couleurs.primaire} /> : <Text style={[styles.texteBouton, styles[`texteBouton_${variante}`]]}>{titre}</Text>}
+      {chargement ? (
+        <ActivityIndicator color={couleurs.texte} />
+      ) : (
+        <>
+          {I && <I size={18} color={couleurs.texte} strokeWidth={2.2} />}
+          <Text style={[t.p.gras, { fontSize: compact ? 14 : 16, color: couleurs.texte, letterSpacing: t.f.relief ? 0.4 : 0 }]}>{t.f.relief ? titre.toUpperCase() : titre}</Text>
+        </>
+      )}
     </Pressable>
   );
 }
 
-type Ton = 'neutre' | 'primaire' | 'succes' | 'alerte' | 'danger' | 'soleil';
-const TONS: Record<Ton, { fond: string; texte: string }> = {
-  neutre: { fond: couleurs.fond, texte: couleurs.texteDoux },
-  primaire: { fond: couleurs.primaireClair, texte: couleurs.primaireFonce },
-  succes: { fond: couleurs.succesClair, texte: '#046C4E' },
-  alerte: { fond: couleurs.alerteClair, texte: '#92400E' },
-  danger: { fond: couleurs.dangerClair, texte: '#991B1B' },
-  soleil: { fond: couleurs.soleilClair, texte: '#7A5600' },
-};
-
-export function Puce({ texte, ton = 'neutre' }: { texte: string; ton?: Ton }) {
+export function Pastille({ texte, ton = 'neutre', icone: I }: { texte: string; ton?: Ton; icone?: LucideIcon }) {
+  const t = useTheme();
+  const c = couleursTon(t, ton);
   return (
-    <View style={[styles.puce, { backgroundColor: TONS[ton].fond }]}>
-      <Text style={[styles.textePuce, { color: TONS[ton].texte }]}>{texte}</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: c.fond, borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4 }}>
+      {I && !t.f.emojis && <I size={12} color={c.texte} strokeWidth={2.4} />}
+      <Text style={[t.p.demi, { fontSize: 12, color: c.texte }]}>{texte}</Text>
     </View>
   );
 }
 
-export function Choix({ libelle, actif, onPress }: { libelle: string; actif: boolean; onPress: () => void }) {
+/** Choix sélectionnable (réponse, filtre). */
+export function Choix({ libelle, actif, onPress, large }: { libelle: string; actif: boolean; onPress: () => void; large?: boolean }) {
+  const t = useTheme();
+  const s = useStyles(styles);
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ selected: actif }} onPress={onPress} style={[styles.choix, actif && styles.choixActif]}>
-      <Text style={[styles.texteChoix, actif && styles.texteChoixActif]}>{libelle}</Text>
+    <Pressable accessibilityRole="button" accessibilityState={{ selected: actif }} onPress={onPress} style={[s.choix, large && s.choixLarge, actif && { borderColor: t.c.accent, backgroundColor: t.c.accentDoux }]}>
+      <Text style={[actif ? t.p.demi : t.p.moyen, { fontSize: large ? 16 : 14, color: actif ? t.c.surAccentDoux : t.c.texte }]}>{libelle}</Text>
     </Pressable>
   );
 }
 
-export function Onglets<T extends string>({ options, valeur, onChange }: { options: { valeur: T; libelle: string }[]; valeur: T; onChange: (v: T) => void }) {
+/** Rangée de filtres qui défile horizontalement. */
+export function Filtres({ children }: { children: ReactNode }) {
   return (
-    <View style={styles.onglets} accessibilityRole="tablist">
-      {options.map((o) => (
-        <Pressable key={o.valeur} accessibilityRole="tab" accessibilityState={{ selected: o.valeur === valeur }} onPress={() => onChange(o.valeur)} style={[styles.onglet, o.valeur === valeur && styles.ongletActif]}>
-          <Text style={[styles.texteOnglet, o.valeur === valeur && styles.texteOngletActif]}>{o.libelle}</Text>
-        </Pressable>
-      ))}
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -ESPACE.m, flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: ESPACE.m, gap: ESPACE.s }}>
+      {children}
+    </ScrollView>
+  );
+}
+
+export function Segments<T extends string>({ options, valeur, onChange }: { options: { valeur: T; libelle: string }[]; valeur: T; onChange: (v: T) => void }) {
+  const t = useTheme();
+  const s = useStyles(styles);
+  return (
+    <View style={s.segments} accessibilityRole="tablist">
+      {options.map((o) => {
+        const actif = o.valeur === valeur;
+        return (
+          <Pressable key={o.valeur} accessibilityRole="tab" accessibilityState={{ selected: actif }} onPress={() => onChange(o.valeur)} style={[s.segment, actif && s.segmentActif]}>
+            <Text numberOfLines={1} style={[actif ? t.p.demi : t.p.moyen, { fontSize: 13, color: actif ? t.c.texte : t.c.texteDoux }]}>{o.libelle}</Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
 
-export function Barre({ valeur, couleur = couleurs.primaire }: { valeur: number; couleur?: string }) {
+export function Champ({ icone: I, style, ...props }: TextInputProps & { icone?: LucideIcon }) {
+  const t = useTheme();
+  const s = useStyles(styles);
+  return (
+    <View style={[s.champ, props.multiline && { alignItems: 'flex-start', minHeight: 132, paddingVertical: 12 }]}>
+      {I && <I size={18} color={t.c.texteFaible} />}
+      <TextInput {...props} placeholderTextColor={t.c.texteFaible} style={[t.p.corps, s.saisie, props.multiline && { textAlignVertical: 'top', minHeight: 108 }, style]} />
+    </View>
+  );
+}
+
+export function Barre({ valeur, couleur, fond, hauteur = 8 }: { valeur: number; couleur?: string; fond?: string; hauteur?: number }) {
+  const t = useTheme();
   const largeur = Math.max(0, Math.min(1, valeur)) * 100;
   return (
-    <View style={styles.barre} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(largeur) }}>
-      <View style={[styles.barreRemplie, { width: `${largeur}%`, backgroundColor: couleur }]} />
+    <View style={{ height: hauteur, borderRadius: 999, backgroundColor: fond ?? t.c.retrait, overflow: 'hidden' }} accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(largeur) }}>
+      <View style={{ height: '100%', width: `${largeur}%`, borderRadius: 999, backgroundColor: couleur ?? t.c.accent }} />
     </View>
   );
 }
 
-/** Affiche le chargement, l'erreur (avec bouton pour réessayer) ou un état vide. */
+// ----- États -----
+
 export function Etat({ chargement, erreur, vide, messageVide, onReessayer }: { chargement?: boolean; erreur?: string | null; vide?: boolean; messageVide?: string; onReessayer?: () => void }) {
-  if (chargement) return <ActivityIndicator style={{ marginVertical: espace.xl }} size="large" color={couleurs.primaire} />;
+  const t = useTheme();
+  if (chargement) return <ActivityIndicator style={{ marginVertical: ESPACE.xl }} color={t.c.texteDoux} />;
   if (erreur) {
     return (
-      <View style={styles.etat}>
-        <Text style={styles.emojiEtat}>📡</Text>
-        <Text style={styles.texteEtat}>{erreur}</Text>
-        {onReessayer && <Bouton titre="Réessayer" variante="secondaire" onPress={onReessayer} />}
+      <View style={{ alignItems: 'center', paddingVertical: ESPACE.xl, gap: ESPACE.m }}>
+        <WifiOff size={28} color={t.c.texteFaible} />
+        <Texte c="doux" centre>{erreur}</Texte>
+        {onReessayer && <Bouton titre="Réessayer" variante="secondaire" compact onPress={onReessayer} />}
       </View>
     );
   }
-  if (vide) {
-    return (
-      <View style={styles.etat}>
-        <Text style={styles.emojiEtat}>🌱</Text>
-        <Text style={styles.texteEtat}>{messageVide ?? 'Rien à afficher pour le moment.'}</Text>
-      </View>
-    );
-  }
+  if (vide) return <Texte c="doux" centre style={{ paddingVertical: ESPACE.xl }}>{messageVide ?? 'Rien pour le moment.'}</Texte>;
   return null;
 }
 
 export function BandeauHorsLigne({ visible }: { visible: boolean }) {
+  const t = useTheme();
   if (!visible) return null;
   return (
-    <View style={styles.horsLigne}>
-      <Text style={styles.texteHorsLigne}>📴 Hors-ligne : tu vois les dernières informations enregistrées.</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: t.c.alerteDoux, borderRadius: t.f.rayonS, padding: 10, marginBottom: ESPACE.m }}>
+      <WifiOff size={15} color={t.c.alerte} />
+      <Texte v="petit" c="alerte">Hors-ligne · dernières données enregistrées</Texte>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  ecran: { flex: 1, backgroundColor: couleurs.fond },
-  contenu: { padding: espace.m, paddingBottom: espace.xl, width: '100%', maxWidth: 560, alignSelf: 'center' },
-  titre: { fontSize: 28, fontWeight: '800', color: couleurs.texte, letterSpacing: -0.5 },
-  sousTitre: { fontSize: 16, color: couleurs.texteDoux, marginTop: espace.xs, lineHeight: 22 },
-  section: { marginTop: espace.l },
-  enteteSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: espace.s },
-  titreSection: { fontSize: 18, fontWeight: '700', color: couleurs.texte },
-  carte: { backgroundColor: couleurs.carte, borderRadius: rayon.moyen, padding: espace.m, borderWidth: 1, borderColor: couleurs.bordure, marginBottom: espace.s },
-  presse: { opacity: 0.75 },
-  bouton: { minHeight: 52, borderRadius: rayon.moyen, alignItems: 'center', justifyContent: 'center', paddingHorizontal: espace.l, marginTop: espace.s },
-  bouton_primaire: { backgroundColor: couleurs.primaire },
-  bouton_secondaire: { backgroundColor: couleurs.primaireClair },
-  bouton_discret: { backgroundColor: 'transparent' },
-  boutonInactif: { opacity: 0.45 },
-  texteBouton: { fontSize: 16, fontWeight: '700' },
-  texteBouton_primaire: { color: couleurs.blanc },
-  texteBouton_secondaire: { color: couleurs.primaireFonce },
-  texteBouton_discret: { color: couleurs.primaire },
-  puce: { alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginRight: 6, marginBottom: 6 },
-  textePuce: { fontSize: 12, fontWeight: '700' },
-  choix: { borderWidth: 1.5, borderColor: couleurs.bordure, backgroundColor: couleurs.carte, borderRadius: 999, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center', marginRight: 8, marginBottom: 8 },
-  choixActif: { borderColor: couleurs.primaire, backgroundColor: couleurs.primaireClair },
-  texteChoix: { fontSize: 14, color: couleurs.texte, fontWeight: '600' },
-  texteChoixActif: { color: couleurs.primaireFonce },
-  onglets: { flexDirection: 'row', backgroundColor: couleurs.bordure, borderRadius: rayon.moyen, padding: 4, marginTop: espace.m },
-  onglet: { flex: 1, minHeight: 40, alignItems: 'center', justifyContent: 'center', borderRadius: rayon.petit, paddingHorizontal: 6 },
-  ongletActif: { backgroundColor: couleurs.carte },
-  texteOnglet: { fontSize: 13, fontWeight: '700', color: couleurs.texteDoux, textAlign: 'center' },
-  texteOngletActif: { color: couleurs.primaireFonce },
-  barre: { height: 10, borderRadius: 999, backgroundColor: couleurs.bordure, overflow: 'hidden' },
-  barreRemplie: { height: '100%', borderRadius: 999 },
-  etat: { alignItems: 'center', paddingVertical: espace.xl },
-  emojiEtat: { fontSize: 40, marginBottom: espace.s },
-  texteEtat: { fontSize: 15, color: couleurs.texteDoux, textAlign: 'center', marginBottom: espace.s, lineHeight: 21 },
-  horsLigne: { backgroundColor: couleurs.alerteClair, borderRadius: rayon.petit, padding: espace.s, marginBottom: espace.s },
-  texteHorsLigne: { color: '#92400E', fontSize: 13, fontWeight: '600' },
+const styles = (t: Theme) => ({
+  ecran: { flex: 1, backgroundColor: t.c.fond } as ViewStyle,
+  contenu: { padding: ESPACE.m, paddingBottom: ESPACE.xl, width: '100%', maxWidth: 560, alignSelf: 'center' } as ViewStyle,
+  pied: { paddingHorizontal: ESPACE.m, paddingTop: ESPACE.s, paddingBottom: ESPACE.m, width: '100%', maxWidth: 560, alignSelf: 'center', gap: ESPACE.s } as ViewStyle,
+  section: { marginTop: ESPACE.l } as ViewStyle,
+  enteteSection: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 } as ViewStyle,
+  carte: {
+    backgroundColor: t.c.surface, borderRadius: t.f.rayonM, padding: ESPACE.m,
+    borderWidth: t.f.ombre && !t.sombre ? 0 : t.f.largeurBordure, borderColor: t.c.bordure,
+    ...(t.f.relief ? { borderBottomWidth: 4 } : {}),
+    ...(t.f.ombre && !t.sombre ? { shadowColor: '#1A1A1A', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 2 }, elevation: 2 } : {}),
+  } as ViewStyle,
+  cartePlate: { padding: 0, overflow: 'hidden' } as ViewStyle,
+  hero: { backgroundColor: t.c.hero, borderRadius: t.f.rayonL, padding: ESPACE.l, ...(t.f.relief ? { borderBottomWidth: 4, borderBottomColor: 'rgba(0,0,0,0.18)' } : {}) } as ViewStyle,
+  presse: { opacity: 0.7 } as ViewStyle,
+  ligne: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: ESPACE.m, minHeight: 56 } as ViewStyle,
+  ligneSeparee: { borderBottomWidth: 1, borderBottomColor: t.c.bordure } as ViewStyle,
+  bouton: { minHeight: 52, borderRadius: t.f.rayonBouton, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: ESPACE.l } as ViewStyle,
+  boutonCompact: { minHeight: 40, paddingHorizontal: ESPACE.m, alignSelf: 'flex-start' } as ViewStyle,
+  choix: { borderWidth: Math.max(1.5, t.f.largeurBordure), borderColor: t.c.bordure, backgroundColor: t.c.surface, borderRadius: 999, paddingHorizontal: 14, minHeight: 40, justifyContent: 'center', ...(t.f.relief ? { borderBottomWidth: 4 } : {}) } as ViewStyle,
+  choixLarge: { borderRadius: t.f.rayonM, minHeight: 56, paddingHorizontal: ESPACE.m } as ViewStyle,
+  segments: { flexDirection: 'row', backgroundColor: t.c.retrait, borderRadius: t.f.rayonM, padding: 4 } as ViewStyle,
+  segment: { flex: 1, minHeight: 38, alignItems: 'center', justifyContent: 'center', borderRadius: Math.max(4, t.f.rayonM - 4), paddingHorizontal: 6 } as ViewStyle,
+  segmentActif: { backgroundColor: t.c.surface, ...(t.sombre ? { backgroundColor: t.c.bordure } : { shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 }) } as ViewStyle,
+  champ: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: t.c.retrait, borderRadius: t.f.rayonM, paddingHorizontal: 14, minHeight: 52, borderWidth: t.f.relief ? 2 : 0, borderColor: t.c.bordure } as ViewStyle,
+  saisie: { flex: 1, fontSize: 16, color: t.c.texte, paddingVertical: 0, outlineStyle: 'none' } as unknown as TextStyle,
 });

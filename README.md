@@ -18,6 +18,11 @@ L'API est dans le dépôt `Process-bakend`.
 
 ## Aperçu
 
-| Accueil | Test Mon ADN | Scout | Anti-arnaque |
+| Accueil | Test Mon ADN | Scout | Mode sombre |
 |---|---|---|---|
-| ![Accueil](docs/captures/10-accueil.png) | ![Test](docs/captures/04-test.png) | ![Scout](docs/captures/06-scout.png) | ![Anti-arnaque](docs/captures/09-arnaque.png) |
+| ![Accueil](docs/captures/accueil.png) | ![Test](docs/captures/test.png) | ![Scout](docs/captures/scout.png) | ![Accueil sombre](docs/captures/accueil-sombre.png) |
+
+Six apparences au choix, chacune en clair et en sombre :
+
+![Apparences en clair](docs/captures/apparences-clair.png)
+![Apparences en sombre](docs/captures/apparences-sombre.png)

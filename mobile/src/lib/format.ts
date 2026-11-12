@@ -5,11 +5,22 @@ export function formaterDate(iso: string): string {
   return `${d.getUTCDate()} ${MOIS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
+const MOIS_COURTS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+export function jourEtMois(iso: string): { jour: string; mois: string } {
+  const d = new Date(iso);
+  return { jour: String(d.getUTCDate()), mois: MOIS_COURTS[d.getUTCMonth()] };
+}
+
 export function formaterDelai(jours: number | null): string {
-  if (jours === null) return 'Dates sur le site officiel';
-  if (jours <= 0) return "Dernier jour aujourd'hui";
-  if (jours === 1) return 'Plus que 1 jour';
-  return `Dans ${jours} jours`;
+  if (jours === null) return 'Dates sur le site';
+  if (jours <= 0) return "Aujourd'hui";
+  return `${jours} j restants`;
+}
+
+/** Retire les emojis d'un texte venu de l'API. */
+export function sansEmoji(texte: string): string {
+  return texte.replace(/[\p{Extended_Pictographic}\uFE0F]/gu, '').trim();
 }
 
 /** Convertit « JJ/MM/AAAA » en date ISO, ou null si la date est invalide. */
@@ -24,26 +35,11 @@ export function analyserDateNaissance(texte: string): string | null {
   return date.toISOString().slice(0, 10);
 }
 
-export const LIBELLES_TYPE: Record<string, { nom: string; emoji: string }> = {
-  bourse: { nom: 'Bourse', emoji: '🎓' },
-  concours: { nom: 'Concours', emoji: '🏆' },
-  programme: { nom: 'Programme', emoji: '🌍' },
-  formation: { nom: 'Formation', emoji: '📚' },
-  evenement: { nom: 'Événement', emoji: '📍' },
-  stage: { nom: 'Stage', emoji: '💼' },
-  emploi: { nom: 'Emploi', emoji: '💼' },
-  aide: { nom: 'Aide', emoji: '🤲' },
-  examen: { nom: 'Examen', emoji: '📝' },
-  inscription: { nom: 'Inscription', emoji: '🖊️' },
-  rentree: { nom: 'Rentrée', emoji: '🎒' },
-  salon: { nom: 'Salon', emoji: '🎪' },
-};
-
 export const LIBELLES_DEMANDE: Record<string, { texte: string; ton: 'succes' | 'alerte' | 'neutre' }> = {
-  forte: { texte: 'Métier qui recrute', ton: 'succes' },
+  forte: { texte: 'Recrute', ton: 'succes' },
   moyenne: { texte: 'Demande moyenne', ton: 'neutre' },
-  saturee: { texte: 'Beaucoup de diplômés', ton: 'alerte' },
-  variable: { texte: 'Dépend de ton talent', ton: 'neutre' },
+  saturee: { texte: 'Très demandé par les étudiants', ton: 'alerte' },
+  variable: { texte: 'Selon le talent', ton: 'neutre' },
 };
 
 /** Niveau de jeu calculé à partir de l'XP (200 XP par niveau). */

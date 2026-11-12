@@ -1,22 +1,19 @@
 import { router } from 'expo-router';
+import { CircleCheck, OctagonAlert, ShieldCheck, TriangleAlert } from 'lucide-react-native';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import { CarteOpportunite } from '../../components/CarteOpportunite';
-import { BandeauHorsLigne, Bouton, Carte, Ecran, Etat, Onglets, SousTitre, Titre } from '../../components/ui';
+import { BandeauHorsLigne, Bouton, Carte, Champ, Ecran, ESPACE, Etat, Segments, Texte } from '../../components/ui';
 import { envoyer, Fil, Verdict } from '../../lib/api';
+import { sansEmoji } from '../../lib/format';
 import { useSession } from '../../lib/session';
-import { couleurs, espace, rayon } from '../../lib/theme';
 import { useChargement } from '../../lib/useChargement';
+import { useTheme } from '../../theme/ThemeProvider';
 
 type Vue = 'pour_toi' | 'presque' | 'verifier';
 
-const COULEURS_VERDICT = {
-  danger: { fond: couleurs.dangerClair, texte: '#991B1B' },
-  prudence: { fond: couleurs.alerteClair, texte: '#92400E' },
-  aucune_alerte: { fond: couleurs.succesClair, texte: '#046C4E' },
-};
-
 function Verificateur() {
+  const t = useTheme();
   const [texte, setTexte] = useState('');
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [envoi, setEnvoi] = useState(false);
@@ -35,26 +32,35 @@ function Verificateur() {
     }
   }
 
+  const aspect = verdict && {
+    danger: { fond: t.c.dangerDoux, couleur: t.c.danger, icone: OctagonAlert, ton: 'danger' as const },
+    prudence: { fond: t.c.alerteDoux, couleur: t.c.alerte, icone: TriangleAlert, ton: 'alerte' as const },
+    aucune_alerte: { fond: t.c.succesDoux, couleur: t.c.succes, icone: CircleCheck, ton: 'succes' as const },
+  }[verdict.niveau];
+
   return (
-    <View>
-      <Text style={styles.aide}>Tu as reçu un message de « bourse », de « visa » ou d'« emploi » sur WhatsApp ou Facebook ? Colle-le ici avant de répondre ou de payer.</Text>
-      <TextInput accessibilityLabel="Message à vérifier" value={texte} onChangeText={setTexte} placeholder="Colle le message ici…" placeholderTextColor={couleurs.texteDoux} style={styles.zone} multiline maxLength={5000} textAlignVertical="top" />
-      <Bouton titre="🛡️ Vérifier ce message" onPress={verifier} chargement={envoi} desactive={texte.trim().length < 10} />
-      {erreur && <Text style={styles.erreur}>{erreur}</Text>}
-      {verdict && (
-        <View accessibilityLiveRegion="polite">
-          <View style={[styles.verdict, { backgroundColor: COULEURS_VERDICT[verdict.niveau].fond }]}>
-            <Text style={[styles.titreVerdict, { color: COULEURS_VERDICT[verdict.niveau].texte }]}>{verdict.titre}</Text>
+    <View style={{ gap: 12 }}>
+      <Texte c="doux">Un message de bourse ou de visa te paraît louche ? Colle-le ici.</Texte>
+      <Champ accessibilityLabel="Message à vérifier" value={texte} onChangeText={setTexte} placeholder="Colle le message" multiline maxLength={5000} />
+      <Bouton titre="Vérifier" icone={ShieldCheck} onPress={verifier} chargement={envoi} desactive={texte.trim().length < 10} />
+      {erreur && <Texte v="petit" c="danger">{erreur}</Texte>}
+      {verdict && aspect && (
+        <View accessibilityLiveRegion="polite" style={{ gap: 10, marginTop: ESPACE.s }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: aspect.fond, borderRadius: t.f.rayonM, padding: ESPACE.m }}>
+            <aspect.icone size={26} color={aspect.couleur} strokeWidth={2.2} />
+            <Texte v="section" c={aspect.ton} style={{ flex: 1 }}>{sansEmoji(verdict.titre)}</Texte>
           </View>
-          {verdict.alertes.map((a) => (
-            <Carte key={a.code}>
-              <Text style={styles.alerte}>⚠️ {a.message}</Text>
+          {verdict.alertes.length > 0 && (
+            <Carte>
+              {verdict.alertes.map((a, i) => (
+                <View key={a.code} style={{ flexDirection: 'row', gap: 10, marginTop: i === 0 ? 0 : 12 }}>
+                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: aspect.couleur, marginTop: 8 }} />
+                  <Texte style={{ flex: 1 }}>{a.message}</Texte>
+                </View>
+              ))}
             </Carte>
-          ))}
-          <Text style={styles.titreConseils}>Les bons réflexes</Text>
-          {verdict.conseils.map((c) => (
-            <Text key={c} style={styles.conseil}>• {c}</Text>
-          ))}
+          )}
+          <Texte v="note" c="faible">Ne paie jamais pour recevoir une bourse. Vérifie toujours sur le site officiel.</Texte>
         </View>
       )}
     </View>
@@ -69,30 +75,30 @@ export default function Scout() {
 
   return (
     <Ecran>
-      <Titre>Scout 🎯</Titre>
-      <SousTitre>Les bourses, concours et programmes auxquels tu as droit.</SousTitre>
+      <Texte v="titre" accessibilityRole="header">Scout</Texte>
       <BandeauHorsLigne visible={fil.horsLigne} />
-      <Onglets
-        options={[
-          { valeur: 'pour_toi', libelle: `Pour toi${fil.donnees ? ` (${fil.donnees.pourToi.length})` : ''}` },
-          { valeur: 'presque', libelle: `Presque${fil.donnees ? ` (${fil.donnees.presqueEligible.length})` : ''}` },
-          { valeur: 'verifier', libelle: '🛡️ Anti-arnaque' },
-        ]}
-        valeur={vue}
-        onChange={setVue}
-      />
-      <View style={{ marginTop: espace.m }}>
+      <View style={{ marginTop: ESPACE.m }}>
+        <Segments
+          options={[
+            { valeur: 'pour_toi', libelle: `Pour toi${fil.donnees ? ` · ${fil.donnees.pourToi.length}` : ''}` },
+            { valeur: 'presque', libelle: `Presque${fil.donnees ? ` · ${fil.donnees.presqueEligible.length}` : ''}` },
+            { valeur: 'verifier', libelle: 'Anti-arnaque' },
+          ]}
+          valeur={vue}
+          onChange={setVue}
+        />
+      </View>
+      <View style={{ marginTop: ESPACE.m }}>
         {vue === 'verifier' ? (
           <Verificateur />
         ) : (
           <>
-            {vue === 'presque' && <Text style={styles.aide}>Il ne te manque qu'un seul critère pour ces opportunités. Regarde comment l'obtenir.</Text>}
             <Etat
               chargement={fil.chargement && !fil.donnees}
               erreur={fil.donnees ? null : fil.erreur}
               onReessayer={fil.recharger}
               vide={!!liste && liste.length === 0}
-              messageVide={vue === 'pour_toi' ? "Pas encore d'opportunité pour ton profil. Complète ton profil pour en débloquer plus." : 'Rien ici pour le moment.'}
+              messageVide={vue === 'pour_toi' ? 'Complète ton profil pour débloquer des opportunités.' : 'Rien ici pour le moment.'}
             />
             {liste?.map((e) => <CarteOpportunite key={e.opportuniteId} element={e} onPress={() => router.push(`/opportunite/${e.opportunite.id}`)} />)}
           </>
@@ -101,14 +107,3 @@ export default function Scout() {
     </Ecran>
   );
 }
-
-const styles = StyleSheet.create({
-  aide: { fontSize: 14, color: couleurs.texteDoux, lineHeight: 20, marginBottom: espace.m },
-  zone: { backgroundColor: couleurs.carte, borderWidth: 1.5, borderColor: couleurs.bordure, borderRadius: rayon.moyen, padding: espace.m, minHeight: 140, fontSize: 16, color: couleurs.texte },
-  erreur: { color: couleurs.danger, fontWeight: '600', marginTop: espace.s },
-  verdict: { borderRadius: rayon.moyen, padding: espace.m, marginVertical: espace.m },
-  titreVerdict: { fontSize: 17, fontWeight: '800', lineHeight: 23 },
-  alerte: { fontSize: 14, color: couleurs.texte, lineHeight: 20 },
-  titreConseils: { fontSize: 15, fontWeight: '700', color: couleurs.texte, marginTop: espace.m, marginBottom: espace.xs },
-  conseil: { fontSize: 14, color: couleurs.texteDoux, lineHeight: 21, marginBottom: 4 },
-});

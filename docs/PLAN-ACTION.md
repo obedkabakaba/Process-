@@ -28,10 +28,14 @@ Ce document dit **ce qui est construit**, **ce qui vient ensuite** et **ce que l
 | Accueil, Explorer, Scout, Radar, Profil | ✅ Fait |
 | Fiches métier et opportunité | ✅ Fait |
 | Lecture hors-ligne des dernières données chargées | ✅ Fait |
+| Design refait : icônes, polices, moins de texte | ✅ Fait |
+| 6 apparences au choix, chacune en clair et en sombre | ✅ Fait |
 
 Le parcours complet a été vérifié dans un navigateur (version web de l'application), sans erreur. **Il n'a pas encore été testé sur un téléphone Android réel.**
 
-Captures : [accueil](captures/10-accueil.png), [test](captures/04-test.png), [résultat](captures/05-resultat.png), [Scout](captures/06-scout.png), [opportunité](captures/07-opportunite.png), [anti-arnaque](captures/09-arnaque.png), [métier](captures/12-metier.png), [Radar](captures/13-radar.png).
+Captures : [accueil](captures/accueil.png), [accueil sombre](captures/accueil-sombre.png), [test](captures/test.png), [résultat](captures/resultat.png), [Scout](captures/scout.png), [opportunité](captures/opportunite.png), [anti-arnaque](captures/arnaque.png), [explorateur](captures/explorer.png), [métier](captures/metier.png), [Radar](captures/radar.png), [profil](captures/profil.png), [choix d'apparence](captures/apparence.png).
+
+Les six apparences côte à côte : [en clair](captures/apparences-clair.png), [en sombre](captures/apparences-sombre.png).
 
 ### Limites connues de cette version
 

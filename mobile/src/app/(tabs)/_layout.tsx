@@ -1,51 +1,50 @@
-import { Tabs } from 'expo-router/js-tabs';
 import { Redirect } from 'expo-router';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { Tabs } from 'expo-router/js-tabs';
+import { CalendarDays, Compass, House, LucideIcon, Target, UserRound } from 'lucide-react-native';
+import { ActivityIndicator, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Logo } from '../../components/Logo';
 import { useSession } from '../../lib/session';
-import { couleurs } from '../../lib/theme';
+import { useTheme } from '../../theme/ThemeProvider';
 
-const icone = (emoji: string) =>
-  function Icone({ focused }: { focused: boolean }) {
-    return <Text style={{ fontSize: 22, opacity: focused ? 1 : 0.55 }}>{emoji}</Text>;
+const icone = (I: LucideIcon) =>
+  function IconeOnglet({ focused }: { focused: boolean }) {
+    const t = useTheme();
+    return <I size={23} color={focused ? t.c.texte : t.c.texteFaible} strokeWidth={focused ? 2.4 : 1.9} />;
   };
 
 export default function Onglets() {
   const { pret, eleve } = useSession();
+  const t = useTheme();
+  const insets = useSafeAreaInsets();
 
-  // Tant que le profil enregistré n'est pas relu, on affiche l'écran de démarrage.
   if (!pret) {
     return (
-      <View style={styles.demarrage}>
-        <Text style={styles.logo}>Kesho</Text>
-        <Text style={styles.devise}>Ton avenir commence aujourd'hui</Text>
-        <ActivityIndicator color={couleurs.blanc} style={{ marginTop: 24 }} />
+      <View style={{ flex: 1, backgroundColor: t.c.fond, alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+        <Logo taille={44} />
+        <ActivityIndicator color={t.c.texteFaible} />
       </View>
     );
   }
-  // Sans profil, on commence par la création du profil.
   if (!eleve) return <Redirect href="/bienvenue" />;
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: couleurs.primaire,
-        tabBarInactiveTintColor: couleurs.texteDoux,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
-        tabBarStyle: { backgroundColor: couleurs.carte, borderTopColor: couleurs.bordure, height: 72, paddingTop: 8, paddingBottom: 12 },
+        tabBarActiveTintColor: t.c.texte,
+        tabBarInactiveTintColor: t.c.texteFaible,
+        tabBarLabelStyle: { ...t.p.demi, fontSize: 11, lineHeight: 14 },
+        tabBarItemStyle: { paddingVertical: 6 },
+        tabBarStyle: { backgroundColor: t.c.fond, borderTopColor: t.c.bordure, borderTopWidth: t.f.largeurBordure, height: 66 + insets.bottom, paddingBottom: insets.bottom },
+        sceneStyle: { backgroundColor: t.c.fond },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Accueil', tabBarIcon: icone('🏠') }} />
-      <Tabs.Screen name="explorer" options={{ title: 'Explorer', tabBarIcon: icone('🧭') }} />
-      <Tabs.Screen name="scout" options={{ title: 'Scout', tabBarIcon: icone('🎯') }} />
-      <Tabs.Screen name="radar" options={{ title: 'Radar', tabBarIcon: icone('📡') }} />
-      <Tabs.Screen name="profil" options={{ title: 'Profil', tabBarIcon: icone('👤') }} />
+      <Tabs.Screen name="index" options={{ title: 'Accueil', tabBarIcon: icone(House) }} />
+      <Tabs.Screen name="explorer" options={{ title: 'Explorer', tabBarIcon: icone(Compass) }} />
+      <Tabs.Screen name="scout" options={{ title: 'Scout', tabBarIcon: icone(Target) }} />
+      <Tabs.Screen name="radar" options={{ title: 'Radar', tabBarIcon: icone(CalendarDays) }} />
+      <Tabs.Screen name="profil" options={{ title: 'Profil', tabBarIcon: icone(UserRound) }} />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  demarrage: { flex: 1, backgroundColor: couleurs.primaire, alignItems: 'center', justifyContent: 'center' },
-  logo: { fontSize: 56, fontWeight: '900', color: couleurs.blanc, letterSpacing: -2 },
-  devise: { fontSize: 16, color: couleurs.soleil, fontWeight: '600', marginTop: 4 },
-});

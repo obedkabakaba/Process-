@@ -1,14 +1,19 @@
 import { router } from 'expo-router';
+import { ArrowLeft, Heart, LucideIcon, Meh, ThumbsDown, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Barre, Bouton, Ecran, Etat } from '../components/ui';
+import { Pressable, Text, View } from 'react-native';
+import { iconeQuestion } from '../components/icones';
+import { Barre, Bouton, Ecran, ESPACE, Etat, Icone, Texte } from '../components/ui';
 import { envoyer, QuestionsTest, ResultatTest } from '../lib/api';
 import { useSession } from '../lib/session';
-import { couleurs, espace, rayon } from '../lib/theme';
 import { useChargement } from '../lib/useChargement';
+import { useTheme } from '../theme/ThemeProvider';
+
+const ICONES_REPONSE: LucideIcon[] = [ThumbsDown, Meh, Heart];
 
 /** Test d'intérêts : une activité par carte, trois réponses possibles. */
 export default function Test() {
+  const t = useTheme();
   const { eleve, definirEleve } = useSession();
   const { donnees, chargement, erreur, recharger } = useChargement<QuestionsTest>('/orientation/questions');
   const [index, setIndex] = useState(0);
@@ -16,16 +21,17 @@ export default function Test() {
   const [envoi, setEnvoi] = useState(false);
   const [erreurEnvoi, setErreurEnvoi] = useState<string | null>(null);
 
+  const quitter = () => (router.canGoBack() ? router.back() : router.replace('/(tabs)'));
+
   if (!donnees) {
     return (
-      <Ecran>
+      <Ecran bords={['top', 'bottom']}>
         <Etat chargement={chargement} erreur={erreur} onReessayer={recharger} />
       </Ecran>
     );
   }
 
   const total = donnees.questions.length;
-  const termine = index >= total;
   const question = donnees.questions[Math.min(index, total - 1)];
 
   async function terminer(finales: Record<string, number>) {
@@ -50,51 +56,64 @@ export default function Test() {
     if (index + 1 >= total) terminer(suivantes);
   }
 
-  if (termine) {
+  if (index >= total) {
     return (
-      <Ecran>
-        <View style={styles.fin}>
-          <Text style={styles.emojiFin}>🧬</Text>
-          <Text style={styles.texteFin}>{erreurEnvoi ?? 'Kesho calcule ton profil…'}</Text>
-          {erreurEnvoi ? <Bouton titre="Réessayer" onPress={() => terminer(reponses)} chargement={envoi} /> : <Etat chargement />}
+      <Ecran bords={['top', 'bottom']} defilant={false}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: ESPACE.m }}>
+          {erreurEnvoi ? (
+            <>
+              <Texte c="doux" centre>{erreurEnvoi}</Texte>
+              <Bouton titre="Réessayer" onPress={() => terminer(reponses)} chargement={envoi} />
+            </>
+          ) : (
+            <>
+              <Etat chargement />
+              <Texte v="section">Calcul de ton profil</Texte>
+            </>
+          )}
         </View>
       </Ecran>
     );
   }
 
   return (
-    <Ecran defilant={false} bords={['bottom']}>
-      <Text style={styles.compteur}>Question {index + 1} sur {total}</Text>
-      <Barre valeur={index / total} couleur={couleurs.soleil} />
-      <View style={styles.carte}>
-        <Text style={styles.consigne}>Est-ce que tu aimerais…</Text>
-        <Text style={styles.emoji}>{question.emoji}</Text>
-        <Text style={styles.texte}>{question.texte}</Text>
+    <Ecran defilant={false} bords={['top', 'bottom']}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: ESPACE.m }}>
+        <Pressable accessibilityRole="button" accessibilityLabel={index > 0 ? 'Question précédente' : 'Fermer'} onPress={index > 0 ? () => setIndex(index - 1) : quitter} hitSlop={12}>
+          {index > 0 ? <ArrowLeft size={24} color={t.c.texte} /> : <X size={24} color={t.c.texte} />}
+        </Pressable>
+        <View style={{ flex: 1 }}>
+          <Barre valeur={index / total} />
+        </View>
+        <Texte v="petit" c="doux" accessibilityLabel={`Question ${index + 1} sur ${total}`}>{index + 1}/{total}</Texte>
       </View>
-      <View style={styles.reponses}>
-        {donnees.echelle.map((e) => (
-          <Pressable key={e.valeur} accessibilityRole="button" accessibilityLabel={e.libelle} onPress={() => repondre(e.valeur)} style={({ pressed }) => [styles.reponse, pressed && { opacity: 0.7 }]}>
-            <Text style={styles.emojiReponse}>{e.emoji}</Text>
-            <Text style={styles.libelleReponse}>{e.libelle}</Text>
-          </Pressable>
-        ))}
+
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: ESPACE.s }}>
+        <View style={{ width: 112, height: 112, borderRadius: t.f.rayonL + 8, backgroundColor: t.c.accentDoux, alignItems: 'center', justifyContent: 'center', marginBottom: ESPACE.xl }}>
+          <Icone icone={iconeQuestion(question.id)} emoji={question.emoji} taille={52} couleur={t.c.surAccentDoux} />
+        </View>
+        <Texte v="petit" c="doux" style={{ marginBottom: ESPACE.s }}>Est-ce que tu aimerais…</Texte>
+        <Texte v="titre" centre>{question.texte}</Texte>
       </View>
-      {index > 0 && <Bouton titre="Question précédente" variante="discret" onPress={() => setIndex(index - 1)} />}
+
+      <View style={{ flexDirection: 'row', gap: ESPACE.s }}>
+        {donnees.echelle.map((e, i) => {
+          const I = ICONES_REPONSE[i] ?? Meh;
+          const fort = i === donnees.echelle.length - 1;
+          return (
+            <Pressable key={e.valeur} accessibilityRole="button" accessibilityLabel={e.libelle} onPress={() => repondre(e.valeur)}
+              style={({ pressed }) => ({
+                flex: 1, minHeight: 84, alignItems: 'center', justifyContent: 'center', gap: 6, borderRadius: t.f.rayonM,
+                backgroundColor: fort ? t.c.accent : t.c.surface, borderWidth: fort ? 0 : Math.max(1.5, t.f.largeurBordure), borderColor: t.c.bordure,
+                ...(t.f.relief ? { borderBottomWidth: pressed ? 0 : 4, borderBottomColor: fort ? t.c.accentRelief : t.c.bordure, marginTop: pressed ? 4 : 0 } : {}),
+                opacity: pressed && !t.f.relief ? 0.7 : 1,
+              })}>
+              <I size={24} color={fort ? t.c.surAccent : t.c.texte} strokeWidth={2} />
+              <Text style={[t.p.demi, { fontSize: 13, color: fort ? t.c.surAccent : t.c.texte }]}>{e.libelle}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </Ecran>
   );
 }
-
-const styles = StyleSheet.create({
-  compteur: { fontSize: 13, fontWeight: '700', color: couleurs.texteDoux, marginBottom: espace.s },
-  carte: { flex: 1, backgroundColor: couleurs.primaire, borderRadius: rayon.grand, marginVertical: espace.m, padding: espace.l, alignItems: 'center', justifyContent: 'center', minHeight: 240 },
-  consigne: { color: couleurs.soleil, fontSize: 15, fontWeight: '700' },
-  emoji: { fontSize: 72, marginVertical: espace.m },
-  texte: { color: couleurs.blanc, fontSize: 24, fontWeight: '800', textAlign: 'center', lineHeight: 31 },
-  reponses: { flexDirection: 'row', gap: espace.s },
-  reponse: { flex: 1, backgroundColor: couleurs.carte, borderWidth: 1.5, borderColor: couleurs.bordure, borderRadius: rayon.moyen, alignItems: 'center', paddingVertical: espace.m, minHeight: 84, justifyContent: 'center' },
-  emojiReponse: { fontSize: 28 },
-  libelleReponse: { fontSize: 13, fontWeight: '700', color: couleurs.texte, marginTop: 4, textAlign: 'center' },
-  fin: { alignItems: 'center', paddingTop: espace.xl * 2 },
-  emojiFin: { fontSize: 64 },
-  texteFin: { fontSize: 17, fontWeight: '600', color: couleurs.texte, marginTop: espace.m, textAlign: 'center' },
-});
