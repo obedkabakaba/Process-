@@ -2,6 +2,8 @@
 
 Retour à la [vision](../VISION.md).
 
+> **À montrer en rendez-vous :** une première version de l'appli fonctionne (test Mon ADN, Scout, anti-arnaque, Radar). Les captures sont dans [captures/](captures/) et le plan dans [PLAN-ACTION.md](PLAN-ACTION.md). Dire clairement qu'il s'agit d'un prototype avant pilote.
+
 ## Mode d'emploi
 
 - **Qui viser** : la *fonction* de la personne à contacter. Les noms des titulaires changent : retrouvez-les sur le site officiel, LinkedIn ou par un contact commun, et notez-les dans le CRM (§20).

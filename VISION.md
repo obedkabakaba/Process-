@@ -5,6 +5,8 @@
 
 *Nom de code du projet : **Process**. Nom commercial proposé : **Kesho** (voir §17 pour la vérification de marque).*
 
+> **État du projet (novembre 2026)** : la première version fonctionne. L'API (`Process-bakend`) et l'application mobile (`mobile/`) couvrent le profil, le test Mon ADN, l'explorateur, le Radar et Scout avec son bouclier anti-arnaque. Le détail de ce qui est fait et de ce qui reste est dans [docs/PLAN-ACTION.md](docs/PLAN-ACTION.md).
+
 ---
 
 ## Sommaire
@@ -38,6 +40,7 @@ Documents détaillés :
 | [docs/MODELE-ECONOMIQUE.md](docs/MODELE-ECONOMIQUE.md) | Revenus, prix, estimation mensuelle |
 | [docs/CONCURRENCE.md](docs/CONCURRENCE.md) | Concurrents RDC, Afrique, monde |
 | [docs/PARTENAIRES.md](docs/PARTENAIRES.md) | Liste des partenaires à démarcher, pitch par partenaire |
+| [docs/PLAN-ACTION.md](docs/PLAN-ACTION.md) | Ce qui est construit, les prochains sprints, les décisions à prendre |
 
 ---
 
@@ -145,6 +148,8 @@ Et ce qui le rend unique : les **opportunités futures** (« dans 2 ans tu pourr
 
 ## 8. Fonctionnalités innovantes
 
+### 8.1 Première série
+
 Au-delà de ce qui précède, voici les idées qui peuvent faire de Kesho une référence mondiale :
 
 | # | Fonction | Ce que c'est | Pourquoi c'est fort |
@@ -173,6 +178,30 @@ Au-delà de ce qui précède, voici les idées qui peuvent faire de Kesho une r�
 | 22 | **Mur des réussites** | Histoires vraies : « 37 élèves de ta province ont obtenu une bourse via Kesho » | Motivation + marketing |
 | 23 | **Kesho Diaspora** | Un parent à l'étranger paie l'abonnement, suit les progrès, parraine | Pouvoir d'achat de la diaspora |
 | 24 | **Tutorat solidaire** | Les grands aident les petits (révisions), gagnent XP et certificat de bénévolat | Entraide + valorisation |
+
+### 8.2 Nouvelles idées (version 2)
+
+Les idées ci-dessous renforcent trois choses : **l'acquisition** (comment les jeunes arrivent), **la rétention** (pourquoi ils restent) et **l'inclusion** (ceux qui n'ont ni argent ni université en vue).
+
+| # | Idée | Ce que c'est | Pourquoi c'est fort |
+|---|---|---|---|
+| 25 | **Le Jour J (résultats de l'Exetat)** | Le jour de la publication, chaque finaliste reçoit un plan personnel : « Avec ton pourcentage et ton profil, voici 5 filières, les écoles près de chez toi et les inscriptions ouvertes. » | C'est le jour où un million de jeunes cherchent quoi faire. Le meilleur moment d'acquisition de l'année |
+| 26 | **Plan B** | Des parcours pour ceux qui échouent à l'Exetat ou ne peuvent pas payer l'université : formation professionnelle courte, apprentissage, repasser l'examen, auto-emploi | La majorité des jeunes est dans ce cas. Personne ne leur parle |
+| 27 | **Tontine études (likelemba)** | Un groupe de parents ou d'amis cotise chaque mois par Mobile Money pour les frais d'études, avec un objectif et un suivi | S'appuie sur une pratique déjà connue de toutes les familles |
+| 28 | **Clubs Kesho** | Un club d'orientation dans chaque école, animé par des élèves, avec un kit d'activités mensuel et des défis inter-écoles | Distribution par les élèves eux-mêmes, sans coût marketing |
+| 29 | **Agents Kesho** | Des étudiants ambassadeurs rémunérés à la commission : ils présentent Kesho dans les écoles et aident les familles à s'abonner | Emploi étudiant + force de vente sur le terrain |
+| 30 | **Vis ma vie** | Une journée d'observation en entreprise, à l'hôpital, au tribunal ou sur un chantier, réservée dans l'appli | Rien ne remplace le fait de voir un métier en vrai |
+| 31 | **Répétiteurs vérifiés** | Mise en relation avec des répétiteurs et étudiants notés, paiement par Mobile Money, commission pour Kesho | Besoin massif avant l'Exetat, revenu récurrent |
+| 32 | **Kesho Kids** | Pour le primaire : histoires audio et mini-jeux sur les métiers, à faire avec un parent, 10 minutes par jour | Crée l'habitude tôt et rassure les parents |
+| 33 | **Défi 21 jours** | Avant un examen : une mission par jour (révision, sommeil, organisation), en équipe | Série quotidienne avec un vrai but |
+| 34 | **Baromètre des métiers** | Chaque trimestre : les 10 métiers qui recrutent, les 10 filières saturées, par province | Contenu repris par les médias, crédibilité auprès de l'État |
+| 35 | **Carte Kesho** | Une carte élève ou étudiant (numérique, QR code) qui donne des réductions : transport, cybercafés, librairies, data | Avantage concret chaque semaine, même sans opportunité en cours |
+| 36 | **Kesho Connect** | Une interface pour que les logiciels de gestion scolaire (Ardoise d'abord) envoient les notes et reçoivent les recommandations | Fait de Kesho la couche d'orientation de tous les logiciels scolaires |
+
+**Les trois paris à tenir en priorité :**
+1. **Le Jour J** comme moment de lancement national (préparer la session 2027).
+2. **Scout + anti-arnaque** comme raison de revenir chaque semaine.
+3. **Plan B** comme preuve que Kesho sert tous les jeunes, pas seulement les futurs universitaires.
 
 ## 9. Kesho Solidarité
 
@@ -273,7 +302,4 @@ Autres indicateurs : utilisateurs actifs hebdomadaires, rétention à 30 jours, 
 
 ## 18. Les 90 prochains jours
 
-1. **Semaines 1-2** : valider le nom et déposer la marque ; créer le pitch deck ; lancer l'enquête terrain dans 3 écoles Ardoise.
-2. **Semaines 2-6** : constituer la base de données (universités de Kinshasa, 200 métiers, calendrier 2026-2027) ; maquettes des écrans clés ; recruter 10 ambassadeurs vidéastes.
-3. **Semaines 4-8** : prototype Scout (10 sources fiables) ; architecture du code ; premiers rendez-vous partenaires (top 20 de [PARTENAIRES.md](docs/PARTENAIRES.md)).
-4. **Semaines 8-12** : MVP en test fermé dans 3 écoles ; mesurer, corriger ; préparer le lancement pilote de 10 écoles.
+Le plan détaillé, sprint par sprint, avec ce qui est déjà construit et les décisions à prendre, est dans [docs/PLAN-ACTION.md](docs/PLAN-ACTION.md).

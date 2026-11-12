@@ -53,6 +53,12 @@ Collecte de smartphones usagés (diaspora, entreprises, banques, opérateurs), r
 ### 2.9 Arrondi solidaire
 Au paiement d'un abonnement ou d'un service, l'utilisateur peut arrondir au dollar supérieur au profit du fonds.
 
+### 2.10 Plan B
+Pour les jeunes qui échouent à l'Exetat ou dont la famille ne peut pas payer l'université, Kesho propose des parcours concrets : formation professionnelle courte, apprentissage chez un artisan ou en entreprise, repasser l'examen, lancer une petite activité. Ces parcours sont gratuits dans l'appli et mis en avant le jour des résultats.
+
+### 2.11 Tontine études
+Un groupe de parents ou de proches cotise chaque mois par Mobile Money pour les frais d'études d'un enfant, avec un objectif visible. La diaspora peut rejoindre le groupe.
+
 ## 3. Transparence
 
 - **Tableau d'impact public** dans l'appli et sur le site : nombre d'élèves aidés, montants reçus, montants dépensés, résultats (passages de classe, réussites à l'Exetat, inscriptions, emplois).

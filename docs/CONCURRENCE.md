@@ -64,6 +64,8 @@ Retour à la [vision](../VISION.md).
 6. **Solidarité** intégrée.
 7. **Distribution via les écoles** (Ardoise).
 
+**Trois avantages à creuser en premier** (idées de la version 2) : le **vérificateur d'arnaque** (non repéré chez les concurrents étudiés, à confirmer en testant leurs applis), le **Jour J** des résultats de l'Exetat et le **Plan B** pour ceux qui n'iront pas à l'université.
+
 **Menaces à surveiller** : Lobinayo (le plus proche), une grande edtech africaine qui arrive en RDC, une initiative gouvernementale qui rendrait gratuit un service équivalent (d'où l'intérêt de **devenir le partenaire du ministère**).
 
 ## Sources

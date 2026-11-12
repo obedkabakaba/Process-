@@ -159,15 +159,18 @@ Bourse Excellence Sciences 2027 — Fondation X
 - **Conversion** : notifications → candidatures → succès.
 - **Arnaques laissées passer** : objectif zéro ; chaque cas analysé.
 
-## 5. Prototype (première brique technique)
+## 5. État de l'implémentation
 
-Objectif : une démo montrable aux écoles et partenaires en 4-6 semaines.
+| Étape | État dans `Process-bakend` |
+|---|---|
+| 1. Collecte | ⏳ À faire. Seuls les signalements de la communauté existent (`POST /api/scout/signalements`), mis en revue sans publication automatique |
+| 2. Extraction par IA | ⏳ À faire |
+| 3. Vérification | ✅ Score de confiance et règles anti-arnaque (`src/scout/confiance.ts`). En dessous de 70, rien n'est montré aux élèves |
+| 4. Matching | ✅ Éligibilité par critère, « presque éligible », pertinence, urgence, diversité (`src/scout/eligibilite.ts`, `src/scout/matching.ts`) |
+| 5. Notification | ⏳ À faire. Le fil est visible dans l'appli (`GET /api/scout/eleves/:id/fil`) |
+| 6. Accompagnement | ⏳ À faire. La fiche affiche déjà les documents à préparer |
+| Vérificateur d'arnaque | ✅ `POST /api/scout/verifier-message`, disponible dans l'onglet Scout de l'appli |
 
-1. Registre de **10-20 sources fiables** (sites de bourses officiels, universités, organismes).
-2. Collecteur planifié + détection de nouveautés.
-3. Extraction IA vers le schéma JSON ci-dessus, avec citation du texte source.
-4. Score de confiance simple (règles).
-5. 20 profils d'élèves fictifs ; matching filtre dur + score de pertinence.
-6. Tableau de bord curateur + envoi de notifications de test (WhatsApp/e-mail).
+Les règles anti-arnaque sont des règles de mots et de motifs : elles attrapent les arnaques classiques, pas toutes. Une annonce sans alerte n'est pas une annonce garantie, et l'appli le dit.
 
-Modules backend (`process-bakend`) : `scout-sources`, `scout-collector`, `scout-extractor`, `scout-verifier`, `scout-matcher`, `scout-notifier`, `applications`.
+Prochaine brique : la collecte et l'extraction (sprint 2 du [plan d'action](PLAN-ACTION.md)).

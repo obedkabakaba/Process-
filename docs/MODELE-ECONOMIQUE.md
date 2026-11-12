@@ -31,6 +31,17 @@ Retour à la [vision](../VISION.md).
 | 14 | **Bailleurs institutionnels** | Banques de développement, agences ONU, fondations, ministères | Contrats de programme (50 000 $ à plusieurs millions) | Mois 6-18 |
 | 15 | **Observatoire de l'emploi des jeunes + licence pays** | Gouvernements, bailleurs, universités / opérateurs étrangers | Rapports, tableaux de bord, licences | Mois 24 |
 
+### Sources ajoutées avec les idées de la version 2
+
+| # | Source | Qui paie | Prix indicatif (hypothèse) | Démarrage |
+|---|---|---|---|---|
+| 16 | **Répétiteurs vérifiés** | Familles | Commission de 10 à 15 % sur chaque séance payée par Mobile Money | Mois 9 |
+| 17 | **Tontine études** | Banque ou opérateur partenaire | Commission sur les fonds collectés, sans frais pour les familles | Mois 12 |
+| 18 | **Carte Kesho** | Commerces et marques partenaires | Frais de référencement ou part sur les ventes | Mois 12 |
+| 19 | **Le Jour J** (résultats de l'Exetat) | Universités et sponsors | Pack de visibilité sur la période des résultats | Session 2027 |
+
+Ces sources ne sont pas comptées dans l'estimation ci-dessous.
+
 ## 3. Estimation mensuelle
 
 ### 3.1 Ce que rapportent les élèves eux-mêmes (B2C) en un mois
