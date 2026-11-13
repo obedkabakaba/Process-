@@ -163,15 +163,24 @@ Bourse Excellence Sciences 2027 — Fondation X
 
 | Étape | État dans `Process-bakend` |
 |---|---|
-| 1. Collecte | ✅ Sources (flux RSS ou pages) gérées par les curateurs, collecte à la demande ou quotidienne, 10 annonces au plus par source et par passage. Signalements de la communauté. Pas encore de recherche web automatique |
-| 2. Extraction par IA | ✅ Écrite (`src/curation/extracteur.ts`) : fiche structurée, citation exigée pour chaque critère, points incertains signalés. **Pas encore essayée avec une vraie clé d'API** |
+| 1. Collecte | ✅ **Recherches IA sur le web** : un curateur décrit ce qu'il cherche, l'IA cherche sur internet et renvoie au plus 8 pistes avec la page officielle. ✅ Sources (flux RSS ou pages) surveillées. ✅ Signalements de la communauté. Tout est relançable chaque jour |
+| 2. Extraction par IA | ✅ Écrite (`src/curation/extracteur.ts`) ; la recherche web est dans `src/curation/rechercheur.ts` : fiche structurée, citation exigée pour chaque critère, points incertains signalés. **Pas encore essayée avec une vraie clé d'API** |
 | 3. Vérification | ✅ Score de confiance et règles anti-arnaque. Rien n'est visible des élèves sans publication par un curateur ; un signal d'arnaque critique bloque la publication |
 | 4. Matching | ✅ Éligibilité par critère, « presque éligible », pertinence, urgence, diversité |
 | 5. Notification | ⏳ À faire. Le fil est visible dans l'appli |
 | 6. Accompagnement | ⏳ À faire. La fiche affiche déjà les documents à préparer |
 | Vérificateur d'arnaque | ✅ Dans l'onglet Scout, utilisable sans compte |
 
-Le parcours d'une annonce aujourd'hui : source ou texte collé → brouillon rempli par l'IA → relecture par un curateur dans l'appli → publication → visible des élèves éligibles.
+Le parcours d'une annonce aujourd'hui : recherche IA sur le web, source surveillée ou texte collé → lecture de la page officielle → brouillon rempli par l'IA → relecture par un curateur dans l'appli → publication → visible des élèves éligibles.
+
+Garde-fous de la recherche IA :
+- l'IA ne doit donner que des adresses vues dans ses résultats ; sinon la fiche le signale au curateur ;
+- chaque page est réellement ouverte : une adresse inventée ou morte est écartée ;
+- une offre dont la date limite est passée est ignorée ;
+- une piste déjà vue n'est pas analysée deux fois ;
+- au plus 8 recherches web et 8 pistes par passage, pour maîtriser le coût.
+
+**Rien n'a encore été essayé avec une vraie clé d'API** : le coût réel d'une recherche et la qualité des pistes sont à mesurer au premier essai.
 
 Les règles anti-arnaque sont des règles de mots et de motifs : elles attrapent les arnaques classiques, pas toutes. Une annonce sans alerte n'est pas une annonce garantie, et l'appli le dit.
 
