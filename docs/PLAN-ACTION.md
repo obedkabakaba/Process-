@@ -20,11 +20,12 @@ Ce document dit **ce qui est construit**, **ce qui vient ensuite** et **ce que l
 | **Espace curateur** : création, relecture, publication et rejet des fiches | ✅ Fait |
 | **Analyse d'une annonce par IA** (texte collé ou adresse web) vers un brouillon de fiche | ✅ Écrit, **pas encore essayé avec une vraie clé** |
 | **Sources surveillées** (flux RSS ou pages), collecte à la demande ou quotidienne | ✅ Écrit, dépend de l'IA ci-dessus |
+| **Recherche d'opportunités sur le web par l'IA** (8 recherches de départ, relançables chaque jour) | ✅ Écrit, **pas encore essayé avec une vraie clé** |
 | **Gestion du Radar** par les curateurs | ✅ Fait |
 | **Rôles** (élève, curateur, administrateur) et gestion de l'équipe | ✅ Fait |
 | **Mesures d'usage** du pilote et statistiques | ✅ Fait |
 | Limites de débit, garde-fous de production, configuration Render, tests en CI | ✅ Fait |
-| Tests : 42 tests unitaires et 10 parcours de bout en bout | ✅ Passent |
+| Tests : 45 tests unitaires et 11 parcours de bout en bout | ✅ Passent |
 
 ### Application mobile : dossier `mobile/`
 
@@ -34,13 +35,13 @@ Ce document dit **ce qui est construit**, **ce qui vient ensuite** et **ce que l
 | Accord parental (code du parent), avec rappel sur l'accueil et dans Scout | ✅ Fait |
 | Test Mon ADN, résultat, accueil, Explorer, Scout, Radar, Profil | ✅ Fait |
 | Modifier ses informations, se déconnecter, supprimer son compte | ✅ Fait |
-| Espace curateur : tableau de bord, fiche, Radar, sources | ✅ Fait |
+| Espace curateur : tableau de bord, recherches IA, fiche, Radar, sources | ✅ Fait |
 | 6 apparences, chacune en clair et en sombre | ✅ Fait |
 | Lecture hors-ligne des dernières données chargées | ✅ Fait |
 
 Le parcours complet a été vérifié dans un navigateur (version web), sans erreur : connexion, profil d'une élève mineure, accord du parent, test, Scout, modification du profil, publication d'une fiche par un curateur, puis suppression du compte. **Il n'a pas encore été testé sur un téléphone Android réel.**
 
-Captures : [bienvenue](captures/bienvenue.png), [connexion](captures/connexion.png), [accord parental](captures/accord-parent.png), [accueil](captures/accueil.png), [accueil sombre](captures/accueil-sombre.png), [test](captures/test.png), [résultat](captures/resultat.png), [Scout](captures/scout.png), [opportunité](captures/opportunite.png), [anti-arnaque](captures/arnaque.png), [explorateur](captures/explorer.png), [métier](captures/metier.png), [Radar](captures/radar.png), [profil](captures/profil.png), [apparences](captures/apparence.png), [espace curateur](captures/curateur.png), [fiche](captures/curateur-fiche.png), [sources](captures/curateur-sources.png).
+Captures : [bienvenue](captures/bienvenue.png), [connexion](captures/connexion.png), [accord parental](captures/accord-parent.png), [accueil](captures/accueil.png), [accueil sombre](captures/accueil-sombre.png), [test](captures/test.png), [résultat](captures/resultat.png), [Scout](captures/scout.png), [opportunité](captures/opportunite.png), [anti-arnaque](captures/arnaque.png), [explorateur](captures/explorer.png), [métier](captures/metier.png), [Radar](captures/radar.png), [profil](captures/profil.png), [apparences](captures/apparence.png), [espace curateur](captures/curateur.png), [fiche](captures/curateur-fiche.png), [sources](captures/curateur-sources.png), [recherches IA](captures/curateur-recherches.png).
 
 Les six apparences côte à côte : [en clair](captures/apparences-clair.png), [en sombre](captures/apparences-sombre.png).
 
@@ -76,7 +77,7 @@ Le code du sprint 1 est fait. Il reste les actions du tableau « Ce qui manque e
 
 | Tâche | Détail |
 |---|---|
-| Régler l'analyse par IA | Essais sur 50 annonces réelles, mesure des erreurs, ajustement de la consigne |
+| Régler l'IA | Premier essai réel des 8 recherches : coût par recherche, part de pistes fiables, erreurs d'extraction ; ajustement des consignes |
 | 20 sources officielles | Ajoutées et suivies dans l'espace curateur |
 | Notifications | Push et WhatsApp : nouvelle opportunité, rappels à J-7 et J-2 |
 | Suivi des candidatures | « Je postule », liste des documents, résultat |

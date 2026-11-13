@@ -1,5 +1,5 @@
 import { Redirect, router, useFocusEffect } from 'expo-router';
-import { CalendarDays, FilePlus2, LogOut, Rss, TriangleAlert } from 'lucide-react-native';
+import { CalendarDays, FilePlus2, LogOut, Rss, Sparkles, TriangleAlert } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { symboleType } from '../../components/icones';
@@ -57,7 +57,10 @@ export default function Curation() {
       )}
 
       <View style={{ flexDirection: 'row', gap: ESPACE.s, marginTop: ESPACE.m }}>
-        <View style={{ flex: 1 }}><Bouton titre="Nouvelle fiche" icone={FilePlus2} onPress={() => router.push('/curation/fiche')} /></View>
+        <View style={{ flex: 1 }}><Bouton titre="Chercher avec l'IA" icone={Sparkles} onPress={() => router.push('/curation/recherches')} /></View>
+      </View>
+      <View style={{ flexDirection: 'row', gap: ESPACE.s, marginTop: ESPACE.s }}>
+        <View style={{ flex: 1 }}><Bouton titre="Nouvelle fiche" variante="secondaire" icone={FilePlus2} onPress={() => router.push('/curation/fiche')} /></View>
       </View>
       <View style={{ flexDirection: 'row', gap: ESPACE.s, marginTop: ESPACE.s }}>
         <View style={{ flex: 1 }}><Bouton titre="Radar" variante="secondaire" icone={CalendarDays} onPress={() => router.push('/curation/radar')} /></View>

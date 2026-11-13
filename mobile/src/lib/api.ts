@@ -157,8 +157,11 @@ export interface FicheCuration {
 export interface Analyse { fiche: Omit<FicheCuration, 'id' | 'sourceType' | 'scoreConfiance' | 'statut' | 'urlSource' | 'demo'> & { estUneOpportunite: boolean }; alertes: Alerte[] }
 export interface Statistiques {
   eleves: { inscrits: number; testTermine: number; consentementEnAttente: number };
-  opportunites: Record<string, number>; septDerniersJours: Record<string, number>; sourcesActives: number; analyseDisponible: boolean;
+  opportunites: Record<string, number>; septDerniersJours: Record<string, number>; sourcesActives: number; recherchesActives: number;
+  analyseDisponible: boolean; rechercheDisponible: boolean;
 }
 export interface EvenementCuration { id: string; titre: string; description: string; type: string; dateDebut: string; dateFin: string | null; niveaux: string[]; provinces: string[]; aConfirmer: boolean }
 export interface SourceCuration { id: string; nom: string; url: string; format: 'rss' | 'page'; sourceType: string; actif: boolean; dernierPassage: string | null; dernierStatut: string | null }
 export interface BilanCollecte { statut: string; lues: number; nouvelles: number; brouillons: number; ignorees: number; erreurs: number; restantes: number }
+export interface RechercheCuration { id: string; intitule: string; actif: boolean; dernierPassage: string | null; dernierStatut: string | null }
+export interface BilanRecherche { statut: string; pistes: number; nouvelles: number; brouillons: number; ignorees: number; erreurs: number; recherchesWeb: number }

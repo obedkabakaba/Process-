@@ -17,7 +17,7 @@ Elle a besoin de l'API du dépôt `Process-bakend`.
 | Scout | Opportunités « Pour toi », « Presque » et vérificateur d'arnaque |
 | Radar | Dates des examens et des inscriptions pour la classe de l'élève |
 | Profil | Informations, modification, apparence, déconnexion, suppression du compte |
-| Espace curateur | Réservé aux curateurs : tableau de bord, fiche avec analyse par IA, Radar, sources |
+| Espace curateur | Réservé aux curateurs : tableau de bord, recherches IA sur le web, fiche avec analyse par IA, Radar, sources |
 
 Le jeton de session est gardé dans le coffre chiffré du téléphone. Les dernières données chargées restent visibles sans connexion (un bandeau « Hors-ligne » l'indique).
 
